@@ -10,7 +10,12 @@ namespace ReczeptBot
             throw new NotImplementedException();
         }
 
-        internal List<Recipe> GetAllRecipesWithTag(string tag)
+        internal List<Recipe> GetAllRecipesWithTag(Tag tag)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void GetTagId(Tag tag)
         {
             throw new NotImplementedException();
         }

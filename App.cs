@@ -46,12 +46,48 @@ namespace ReczeptBot
             Console.WriteLine("Välj ett alternativ");
             Console.WriteLine("a) Hämta ett slumpat recept");
             Console.WriteLine("b) Hämta ett recept med en tag");
+            Console.WriteLine();
 
             ConsoleKey input = Console.ReadKey().Key;
 
+            Recipe recipe = new Recipe();
 
-            Recipe recipe = GetRandomRecipe();
-            PrintRecipe(recipe);
+            switch (input)
+            {
+                case ConsoleKey.A:
+                    recipe = GetRandomRecipe();
+                    PrintRecipe(recipe);
+                    return;
+                case ConsoleKey.B:
+                    recipe = GetRandomRecipeWithTag();
+                    PrintRecipe(recipe);
+                    return;
+                case ConsoleKey.C:
+                    _currentPage = Page.MainMenu;
+                    return;
+
+            }
+        }
+
+        private Recipe GetRandomRecipeWithTag()
+        {
+            Console.Write("Vilken tag vill du använda? ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+
+            Tag tag = new Tag
+            {
+                Name = Console.ReadLine()
+            };
+
+            Console.ResetColor();
+
+            _dataAccess.GetTagId(tag);
+
+            List<Recipe> recipes = _dataAccess.GetAllRecipesWithTag(tag);
+
+            int randomIndex = r.Next(recipes.Count);
+
+            return recipes[randomIndex];
         }
 
         internal void PageMainMenu()
@@ -61,6 +97,7 @@ namespace ReczeptBot
             Console.WriteLine("Välj ett alternativ");
             Console.WriteLine("a) Hämta ett recept");
             Console.WriteLine("c) Avsluta programmet");
+            Console.WriteLine();
 
             ConsoleKey choice = Console.ReadKey().Key;
 
@@ -90,10 +127,14 @@ namespace ReczeptBot
 
         void Header(string h = "")
         {
+            Console.Clear();
+
             Console.ForegroundColor = ConsoleColor.Green;
+
             Console.WriteLine();
             Console.WriteLine(h);
             Console.WriteLine();
+
             Console.ResetColor();
         }
     }
