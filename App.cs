@@ -10,7 +10,8 @@ namespace ReczeptBot
     {
         DataAccess _dataAccess = new DataAccess();
         Random r = new Random();
-        Page _currentPage = Page.MainMenu;
+        Page _currentPage = Page.LoginScreen;
+        User _currentUser = new User();
 
         internal void Run()
         {
@@ -18,11 +19,17 @@ namespace ReczeptBot
             {
                 switch (_currentPage)
                 {
+                    case Page.LoginScreen:
+                        PageLoginScreen();
+                        break;
                     case Page.MainMenu:
                         PageMainMenu();
                         break;
-                    case Page.GetRandomRecipe:
-                        PageGetRandomRecipe();
+                    case Page.GetRecipe:
+                        PageGetRecipe();
+                        break;
+                    case Page.GetRecipeList:
+                        PageGetRecipeList();
                         break;
                     case Page.EndProgram:
                         PageEndProgram();
@@ -32,6 +39,55 @@ namespace ReczeptBot
 
         }
 
+        private void PageGetRecipeList()
+        {
+            Header("Hämta en lista med recept");
+
+            Console.WriteLine("Välj ett alternativ");
+            Console.WriteLine("a) Hämta ett slumpat recept");
+            Console.WriteLine("b) Hämta ett recept med en tag");
+            Console.WriteLine("c) Gå till huvudmenyn");
+            Console.WriteLine();
+
+            ConsoleKey input = Console.ReadKey(true).Key;
+
+            Recipe recipe = new Recipe();
+
+            switch (input)
+            {
+                case ConsoleKey.A:
+                    recipe = GetRandomRecipe();
+                    PrintRecipe(recipe);
+                    return;
+                case ConsoleKey.B:
+                    recipe = GetRandomRecipeWithTag();
+                    PrintRecipe(recipe);
+                    return;
+                case ConsoleKey.C:
+                    _currentPage = Page.MainMenu;
+                    return;
+
+            }
+        }
+
+        private void PageLoginScreen()
+        {
+            Header("Välkommen till Reczept!");
+
+            Console.Write("Vad heter du? ");
+
+            User user = new User
+            {
+                Name = Console.ReadLine()
+            };
+
+            _dataAccess.GetUserIdFromName(user);
+
+            _currentUser = user;
+
+            _currentPage = Page.MainMenu;
+        }
+
         private void PageEndProgram()
         {
             Header("Avslutar");
@@ -39,16 +95,17 @@ namespace ReczeptBot
             Console.ReadKey();
         }
 
-        private void PageGetRandomRecipe()
+        private void PageGetRecipe()
         {
             Header("Hämta ett recept");
 
             Console.WriteLine("Välj ett alternativ");
             Console.WriteLine("a) Hämta ett slumpat recept");
             Console.WriteLine("b) Hämta ett recept med en tag");
+            Console.WriteLine("c) Gå till huvudmenyn");
             Console.WriteLine();
 
-            ConsoleKey input = Console.ReadKey().Key;
+            ConsoleKey input = Console.ReadKey(true).Key;
 
             Recipe recipe = new Recipe();
 
@@ -85,9 +142,14 @@ namespace ReczeptBot
 
             List<Recipe> recipes = _dataAccess.GetAllRecipesWithTag(tag);
 
-            int randomIndex = r.Next(recipes.Count);
+            return GetRandomRecipeFromList(recipes);
+        }
 
-            return recipes[randomIndex];
+        private Recipe GetRandomRecipeFromList(List<Recipe> list)
+        {
+            int randomIndex = r.Next(list.Count - 1);
+
+            return list[randomIndex];
         }
 
         internal void PageMainMenu()
@@ -96,7 +158,8 @@ namespace ReczeptBot
 
             Console.WriteLine("Välj ett alternativ");
             Console.WriteLine("a) Hämta ett recept");
-            Console.WriteLine("b) Avsluta programmet");
+            Console.WriteLine("b) Hämta en lista med recept");
+            Console.WriteLine("c) Avsluta programmet");
             Console.WriteLine();
 
             ConsoleKey choice = Console.ReadKey().Key;
@@ -104,9 +167,12 @@ namespace ReczeptBot
             switch(choice)
             {
                 case ConsoleKey.A:
-                    _currentPage = Page.GetRandomRecipe;
+                    _currentPage = Page.GetRecipe;
                     break;
                 case ConsoleKey.B:
+                    _currentPage = Page.GetRecipeList;
+                    break;
+                case ConsoleKey.C:
                     _currentPage = Page.EndProgram;
                     break;
             }
@@ -116,13 +182,47 @@ namespace ReczeptBot
         {
             List<Recipe> recipes = _dataAccess.GetAllRecipes();
 
-            int randomIndex = r.Next(recipes.Count);
-
-            return recipes[randomIndex];
+            return GetRandomRecipeFromList(recipes);
         }
+
         private void PrintRecipe(Recipe recipe)
         {
             Header(recipe.Name);
+
+            PrintRecipeTags(recipe);
+
+            Console.Write("Gillade du detta recept? (j/n): ");
+
+            while(true)
+            {
+                ConsoleKey input = Console.ReadKey().Key;
+
+                switch(input)
+                {
+                    case ConsoleKey.J:
+                        _dataAccess.AddUserLikesRecipe(recipe, _currentUser);
+                        return;
+                    case ConsoleKey.N:
+                        return;
+                }
+
+            }
+        }
+
+        private void PrintRecipeTags(Recipe recipe)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            
+            List<Tag> tags = _dataAccess.GetTagsForRecipe(recipe);
+
+            foreach (Tag tag in tags)
+            {
+                Console.Write($"#{tag}   ");
+            }
+
+            Console.WriteLine();
+
+            Console.ResetColor();
         }
 
         void Header(string h = "")

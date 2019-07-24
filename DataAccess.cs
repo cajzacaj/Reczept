@@ -10,7 +10,7 @@ namespace ReczeptBot
 
         internal List<Recipe> GetAllRecipes()
         {
-            var sql = @"SELECT [Id] [Name]
+            var sql = @"SELECT [Id], [Name]
                         FROM Recipe";
 
             using (SqlConnection connection = new SqlConnection(conString))
@@ -40,7 +40,7 @@ namespace ReczeptBot
 
         internal List<Recipe> GetAllRecipesWithTag(Tag tag)
         {
-            var sql = @"SELECT [Id] [Name]
+            var sql = @"SELECT [Id], [Name]
                         FROM Recipe
                         JOIN TagsOnRecipe tor ON Recipe.Id=tor.RecipeId
                         JOIN Tag ON tor.TagId=Tag.Id
@@ -70,7 +70,23 @@ namespace ReczeptBot
 
             }
         }
+
+        internal void GetUserIdFromName(User user)
+        {
+            throw new NotImplementedException();
+        }
+
         internal void GetTagId(Tag tag)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal List<Tag> GetTagsForRecipe(Recipe recipe)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void AddUserLikesRecipe(Recipe recipe, User currentUser)
         {
             throw new NotImplementedException();
         }

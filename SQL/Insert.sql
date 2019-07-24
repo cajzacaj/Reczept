@@ -224,3 +224,9 @@ INSERT INTO TagsOnRecipe (TagId,RecipeId)
 VALUES (11,21)
 INSERT INTO TagsOnRecipe (TagId,RecipeId) 
 VALUES (14,21)
+
+-- Lägg till "användare" för testsyfte
+insert into SlackUser (MemberId, Name)
+values	('UJYN4N39S','Cajza'),
+		('UJZMEGR5W','Marcus'),
+		('UJYGD2D1B','Jens')
