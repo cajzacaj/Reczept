@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,8 +21,8 @@ namespace ReczeptBot
                     case Page.MainMenu:
                         PageMainMenu();
                         break;
-                    case Page.GetRecipe:
-                        PageGetRecipe();
+                    case Page.GetRandomRecipe:
+                        PageGetRandomRecipe();
                         break;
                     case Page.EndProgram:
                         PageEndProgram();
@@ -35,17 +35,17 @@ namespace ReczeptBot
         private void PageEndProgram()
         {
             Header("Avslutar");
-            Console.WriteLine("V√§lkommen √•ter");
+            Console.WriteLine("V‰lkommen Âter");
             Console.ReadKey();
         }
 
-        private void PageGetRecipe()
+        private void PageGetRandomRecipe()
         {
-            Header("H√§mta ett recept");
+            Header("H‰mta ett recept");
 
-            Console.WriteLine("V√§lj ett alternativ");
-            Console.WriteLine("a) H√§mta ett slumpat recept");
-            Console.WriteLine("b) H√§mta ett recept med en tag");
+            Console.WriteLine("V‰lj ett alternativ");
+            Console.WriteLine("a) H‰mta ett slumpat recept");
+            Console.WriteLine("b) H‰mta ett recept med en tag");
             Console.WriteLine();
 
             ConsoleKey input = Console.ReadKey().Key;
@@ -71,7 +71,7 @@ namespace ReczeptBot
 
         private Recipe GetRandomRecipeWithTag()
         {
-            Console.Write("Vilken tag vill du anv√§nda? ");
+            Console.Write("Vilken tag vill du anv‰nda? ");
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
 
             Tag tag = new Tag
@@ -92,11 +92,11 @@ namespace ReczeptBot
 
         internal void PageMainMenu()
         {
-            Header("V√§lkommen till Reczipe!");
+            Header("V‰lkommen till Reczipe!");
 
-            Console.WriteLine("V√§lj ett alternativ");
-            Console.WriteLine("a) H√§mta ett recept");
-            Console.WriteLine("c) Avsluta programmet");
+            Console.WriteLine("V‰lj ett alternativ");
+            Console.WriteLine("a) H‰mta ett recept");
+            Console.WriteLine("b) Avsluta programmet");
             Console.WriteLine();
 
             ConsoleKey choice = Console.ReadKey().Key;
@@ -104,7 +104,7 @@ namespace ReczeptBot
             switch(choice)
             {
                 case ConsoleKey.A:
-                    _currentPage = Page.GetRecipe;
+                    _currentPage = Page.GetRandomRecipe;
                     break;
                 case ConsoleKey.B:
                     _currentPage = Page.EndProgram;
