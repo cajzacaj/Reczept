@@ -10,7 +10,7 @@ namespace ReczeptBot
             throw new NotImplementedException();
         }
 
-        internal void GetRecipeWithTag(string tag)
+        internal List<Recipe> GetAllRecipesWithTag(string tag)
         {
             throw new NotImplementedException();
         }
