@@ -21,8 +21,8 @@ namespace ReczeptBot
                     case Page.MainMenu:
                         PageMainMenu();
                         break;
-                    case Page.GetRandomRecipe:
-                        PageGetRandomRecipe();
+                    case Page.GetRecipe:
+                        PageGetRecipe();
                         break;
                     case Page.EndProgram:
                         PageEndProgram();
@@ -39,8 +39,17 @@ namespace ReczeptBot
             Console.ReadKey();
         }
 
-        private void PageGetRandomRecipe()
+        private void PageGetRecipe()
         {
+            Header("Hämta ett recept");
+
+            Console.WriteLine("Välj ett alternativ");
+            Console.WriteLine("a) Hämta ett slumpat recept");
+            Console.WriteLine("b) Hämta ett recept med en tag");
+
+            ConsoleKey input = Console.ReadKey().Key;
+
+
             Recipe recipe = GetRandomRecipe();
             PrintRecipe(recipe);
         }
@@ -51,14 +60,14 @@ namespace ReczeptBot
 
             Console.WriteLine("Välj ett alternativ");
             Console.WriteLine("a) Hämta ett recept");
-            Console.WriteLine("b) Avsluta programmet");
+            Console.WriteLine("c) Avsluta programmet");
 
-            ConsoleKey input = Console.ReadKey().Key;
+            ConsoleKey choice = Console.ReadKey().Key;
 
-            switch(input)
+            switch(choice)
             {
                 case ConsoleKey.A:
-                    _currentPage = Page.GetRandomRecipe;
+                    _currentPage = Page.GetRecipe;
                     break;
                 case ConsoleKey.B:
                     _currentPage = Page.EndProgram;

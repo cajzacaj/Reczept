@@ -9,5 +9,10 @@ namespace ReczeptBot
         {
             throw new NotImplementedException();
         }
+
+        internal void GetRecipeWithTag(string tag)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

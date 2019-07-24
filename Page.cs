@@ -8,6 +8,6 @@ namespace ReczeptBot
 {
     public enum Page
     {
-        MainMenu, GetRandomRecipe, EndProgram
+        MainMenu, GetRecipe, EndProgram
     }
 }
