@@ -10,7 +10,7 @@ namespace ReczeptBot
     {
         DataAccess _dataAccess = new DataAccess();
         Random r = new Random();
-        Page _currentPage = Page.LoginScreen;
+        Page _currentPage = Page.LoginScreen
         User _currentUser = new User();
 
         internal void Run()
@@ -44,30 +44,65 @@ namespace ReczeptBot
             Header("Hämta en lista med recept");
 
             Console.WriteLine("Välj ett alternativ");
-            Console.WriteLine("a) Hämta ett slumpat recept");
-            Console.WriteLine("b) Hämta ett recept med en tag");
+            Console.WriteLine("a) Hämta alla recept");
+            Console.WriteLine("b) Hämta alla recept med en angiven tag");
             Console.WriteLine("c) Gå till huvudmenyn");
             Console.WriteLine();
 
             ConsoleKey input = Console.ReadKey(true).Key;
 
-            Recipe recipe = new Recipe();
+            List<Recipe> recipes = new List<Recipe>();
 
             switch (input)
             {
                 case ConsoleKey.A:
-                    recipe = GetRandomRecipe();
-                    PrintRecipe(recipe);
+                    recipes = GetAllRecipes();
+                    PrintListOfRecipes(recipes);
                     return;
                 case ConsoleKey.B:
-                    recipe = GetRandomRecipeWithTag();
-                    PrintRecipe(recipe);
+                    recipes = GetAllRecipesWithTag();
+                    PrintListOfRecipes(recipes);
                     return;
                 case ConsoleKey.C:
                     _currentPage = Page.MainMenu;
                     return;
 
             }
+        }
+
+        private List<Recipe> GetAllRecipesWithTag()
+        {
+            Console.Write("Vilken tag vill du använda? ");
+
+            Tag tag = new Tag
+            {
+                Name = Console.ReadLine()
+            };
+
+            _dataAccess.GetTagId(tag);
+
+            return _dataAccess.GetAllRecipesWithTag(tag);
+        }
+
+        private void PrintListOfRecipes(List<Recipe> recipes)
+        {
+            Header("Receptlista");
+
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+            foreach (Recipe recipe in recipes)
+            {
+                Console.WriteLine($"* {recipe.Name}");
+            }
+
+            Console.ResetColor();
+
+            Console.ReadKey();
+        }
+
+        private List<Recipe> GetAllRecipes()
+        {
+            return _dataAccess.GetAllRecipes();
         }
 
         private void PageLoginScreen()
