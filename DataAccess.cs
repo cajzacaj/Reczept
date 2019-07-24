@@ -73,7 +73,7 @@ namespace ReczeptBot
 
         internal void GetUserIdFromName(User user)
         {
-            var sql = @"SELECT Id
+            var sql = @"SELECT MemberId
                         FROM SlackUser 
                         WHERE Name=@Name";
 
@@ -117,7 +117,7 @@ namespace ReczeptBot
         {
             var sql = @"SELECT t.id, t.Name FROM Tag t
                         JOIN TagsOnRecipe tor ON t.Id=tor.TagId
-                        JOIN Recipe r ON tor.UserId = r.Id
+                        JOIN Recipe r ON tor.RecipeId = r.Id
                         WHERE r.Id=@Id";
 
             using (SqlConnection connection = new SqlConnection(conString))
