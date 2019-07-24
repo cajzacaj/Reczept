@@ -146,16 +146,41 @@ namespace ReczeptBot
 
         internal void AddUserLikesRecipe(Recipe recipe, User currentUser)
         {
-            var sql = "INSERT INTO UserLikesRecipe(UserId, RecipeId) VALUES(@UserId, @RecipeId)";
+            if (!UserLikesRecipe(recipe, currentUser))
+            {
+                var sql = "INSERT INTO UserLikesRecipe(UserId, RecipeId) VALUES(@UserId, @RecipeId)";
+
+                using (SqlConnection connection = new SqlConnection(conString))
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
+                    command.Parameters.Add(new SqlParameter("RecipeId", recipe.Id));
+
+                    command.ExecuteNonQuery();
+                }
+            }
+            
+        }
+        internal bool UserLikesRecipe(Recipe recipe, User currentUser)
+        {
+            var sql = @"SELECT RecipeId
+                        FROM UserLikesRecipe
+                        WHERE RecipeId=@RecipeId AND UserId=@UserId";
 
             using (SqlConnection connection = new SqlConnection(conString))
             using (SqlCommand command = new SqlCommand(sql, connection))
             {
                 connection.Open();
-                command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
                 command.Parameters.Add(new SqlParameter("RecipeId", recipe.Id));
+                command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
 
-                command.ExecuteNonQuery();
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
+                    return true;
+                else
+                    return false;
             }
         }
     }
