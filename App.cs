@@ -10,7 +10,7 @@ namespace ReczeptBot
     {
         DataAccess _dataAccess = new DataAccess();
         Random r = new Random();
-        Page _currentPage = Page.LoginScreen
+        Page _currentPage = Page.LoginScreen;
         User _currentUser = new User();
 
         internal void Run()
