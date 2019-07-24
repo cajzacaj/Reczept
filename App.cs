@@ -252,7 +252,7 @@ namespace ReczeptBot
 
             foreach (Tag tag in tags)
             {
-                Console.Write($"#{tag}   ");
+                Console.Write($"#{tag.Name}   ");
             }
 
             Console.WriteLine();
