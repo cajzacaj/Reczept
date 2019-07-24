@@ -40,7 +40,7 @@ namespace ReczeptBot
 
         internal List<Recipe> GetAllRecipesWithTag(Tag tag)
         {
-            var sql = @"SELECT [Id], [Name]
+            var sql = @"SELECT Recipe.Id, Recipe.Name
                         FROM Recipe
                         JOIN TagsOnRecipe tor ON Recipe.Id=tor.RecipeId
                         JOIN Tag ON tor.TagId=Tag.Id
