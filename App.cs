@@ -39,7 +39,7 @@ namespace ReczeptBot
 
         }
 
-        private void PageGetRecipeList()
+        public void PageGetRecipeList()
         {
             Header("Hämta en lista med recept");
 
@@ -70,7 +70,7 @@ namespace ReczeptBot
             }
         }
 
-        private List<Recipe> GetAllRecipesWithTag()
+        public List<Recipe> GetAllRecipesWithTag()
         {
             Console.Write("Vilken tag vill du använda? ");
 
@@ -84,7 +84,7 @@ namespace ReczeptBot
             return _dataAccess.GetAllRecipesWithTag(tag);
         }
 
-        private void PrintListOfRecipes(List<Recipe> recipes)
+        public void PrintListOfRecipes(List<Recipe> recipes)
         {
             Header("Receptlista");
 
@@ -100,12 +100,12 @@ namespace ReczeptBot
             Console.ReadKey();
         }
 
-        private List<Recipe> GetAllRecipes()
+        public List<Recipe> GetAllRecipes()
         {
             return _dataAccess.GetAllRecipes();
         }
 
-        private void PageLoginScreen()
+        public void PageLoginScreen()
         {
             Header("Välkommen till Reczept!");
 
@@ -123,14 +123,14 @@ namespace ReczeptBot
             _currentPage = Page.MainMenu;
         }
 
-        private void PageEndProgram()
+        public void PageEndProgram()
         {
             Header("Avslutar");
             Console.WriteLine("Välkommen åter");
             Console.ReadKey();
         }
 
-        private void PageGetRecipe()
+        public void PageGetRecipe()
         {
             Header("Hämta ett recept");
 
@@ -161,7 +161,7 @@ namespace ReczeptBot
             }
         }
 
-        private Recipe GetRandomRecipeWithTag()
+        public Recipe GetRandomRecipeWithTag()
         {
             Console.Write("Vilken tag vill du använda? ");
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -180,7 +180,7 @@ namespace ReczeptBot
             return GetRandomRecipeFromList(recipes);
         }
 
-        private Recipe GetRandomRecipeFromList(List<Recipe> list)
+        public Recipe GetRandomRecipeFromList(List<Recipe> list)
         {
             int randomIndex = r.Next(list.Count - 1);
 
@@ -213,14 +213,20 @@ namespace ReczeptBot
             }
         }
 
-        private Recipe GetRandomRecipe()
+        public Recipe GetRandomRecipe()
         {
             List<Recipe> recipes = _dataAccess.GetAllRecipes();
 
             return GetRandomRecipeFromList(recipes);
         }
 
-        private void PrintRecipe(Recipe recipe)
+        public Recipe GetRandomRecipe2()
+        {
+            List<Recipe> recipes = _dataAccess.GetAllRecipes();
+
+            return GetRandomRecipeFromList(recipes);
+        }
+        public void PrintRecipe(Recipe recipe)
         {
             Header(recipe.Name);
 
@@ -244,7 +250,7 @@ namespace ReczeptBot
             }
         }
 
-        private void PrintRecipeTags(Recipe recipe)
+        public void PrintRecipeTags(Recipe recipe)
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             

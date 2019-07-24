@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 
 namespace ReczeptBot
 {
-    internal class DataAccess
+    public class DataAccess
     {
         private const string conString = "Server=(localdb)\\mssqllocaldb; Database=Reczept";
 
@@ -144,7 +144,7 @@ namespace ReczeptBot
             }
         }
 
-        internal void AddUserLikesRecipe(Recipe recipe, User currentUser)
+        public void AddUserLikesRecipe(Recipe recipe, User currentUser)
         {
             if (!UserLikesRecipe(recipe, currentUser))
             {
