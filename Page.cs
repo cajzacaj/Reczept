@@ -10,6 +10,7 @@ namespace ReczeptBot
     {
         MainMenu, GetRecipe, EndProgram,
         LoginScreen,
-        GetRecipeList
+        GetRecipeList,
+        GetWeekMenu
     }
 }

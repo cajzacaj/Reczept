@@ -162,6 +162,40 @@ namespace ReczeptBot
             }
             
         }
+
+        internal List<Recipe> GetAllRecipesLikedByUser(User currentUser)
+        {
+            var sql = @"SELECT Recipe.Id, Recipe.Name
+                        FROM Recipe
+                        JOIN UserLikesRecipe ulr ON Recipe.Id=ulr.RecipeId
+                        JOIN SlackUser su ON ulr.UserId=su.MemberId
+                        WHERE su.MemberId=@Id";
+
+            using (SqlConnection connection = new SqlConnection(conString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
+            {
+                connection.Open();
+                command.Parameters.Add(new SqlParameter("Id", currentUser.MemberId));
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                var list = new List<Recipe>();
+
+                while (reader.Read())
+                {
+                    var recipe = new Recipe
+                    {
+                        Id = reader.GetSqlInt32(0).Value,
+                        Name = reader.GetSqlString(1).Value,
+                    };
+                    list.Add(recipe);
+                }
+
+                return list;
+
+            }
+        }
+
         internal bool UserLikesRecipe(Recipe recipe, User currentUser)
         {
             var sql = @"SELECT RecipeId
