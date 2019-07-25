@@ -298,7 +298,11 @@ namespace ReczeptBot
         public Recipe GetLastRecipe(User currentUser)
         {
             var recipe = new Recipe();
-            Connect(@"Select RecipeId from UserHistory WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = @UserId)", (command) =>
+            var ingredient = new Ingredient();
+
+            Connect(@"Select RecipeId, Recipe.Name, Recipe.Description from UserHistory 
+                    JOIN Recipe on Recipe.Id = RecipeId
+                    WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = 'UJYGD2D1B')", (command) =>
             {
                 command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
                 command.ExecuteNonQuery();
@@ -311,6 +315,7 @@ namespace ReczeptBot
                     recipe.Description = reader.GetSqlString(2).Value;
                 }
             });
+            recipe.Ingredients = GetIngredientsInRecipe(recipe);
             return recipe;
         }
 

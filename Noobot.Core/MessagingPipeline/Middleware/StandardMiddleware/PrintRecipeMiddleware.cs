@@ -3,6 +3,7 @@ using Noobot.Core.MessagingPipeline.Request;
 using Noobot.Core.MessagingPipeline.Response;
 using ReczeptBot;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
 {
@@ -32,7 +33,15 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
             User user = new User();
             user.MemberId = message.UserId;
             recipe = dataAccess.GetLastRecipe(user);
-            app.PrintRecipeFull(recipe);
+            StringBuilder builder = new StringBuilder();
+            builder.Append($"{recipe.Name}\n\n");
+            foreach (Ingredient ingredient in recipe.Ingredients)
+            {
+                builder.Append($"{ingredient.Name.PadRight(20)}{ingredient.Quantity} {ingredient.Unit}\n");
+            }
+            builder.Append($"\n{recipe.Description}");
+            yield return message.ReplyToChannel($"```{builder.ToString()}```");
+
             yield return message.ReplyToChannel("Hoppas det smakar!");
             yield return message.ReplyToChannel("Skriv 'gillar' eller 'gillar inte' när du prövat receptet!");
 
