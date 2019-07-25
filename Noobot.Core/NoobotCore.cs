@@ -14,6 +14,7 @@ using Noobot.Core.MessagingPipeline.Request.Extensions;
 using Noobot.Core.MessagingPipeline.Response;
 using Noobot.Core.Plugins;
 using Noobot.Core.Plugins.StandardPlugins;
+using ReczeptBot;
 using SlackConnector;
 using SlackConnector.Models;
 
@@ -146,6 +147,14 @@ namespace Noobot.Core
                 BotIsMentioned = message.MentionsBot
             };
 
+            DataAccess dataAccess = new DataAccess("Server=(localdb)\\mssqllocaldb; Database=Reczept");
+            User user = new User()
+            {
+                MemberId = incomingMessage.UserId,
+                Name = incomingMessage.Username
+            };
+            dataAccess.CheckIfExistingUser(user);
+            _logger.LogInformation($"[User Created]");
             incomingMessage.TargetedText = incomingMessage.GetTargetedText();
 
             try
