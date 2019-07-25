@@ -2,6 +2,7 @@
 using Noobot.Core.MessagingPipeline.Request;
 using Noobot.Core.MessagingPipeline.Response;
 using ReczeptBot;
+using System;
 using System.Collections.Generic;
 
 namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
@@ -28,7 +29,7 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
         {
             App app = new App();
             Recipe recipe = new Recipe();
-            DataAccess dataAccess = new DataAccess();
+            DataAccess dataAccess = new DataAccess("Server=(localdb)\\mssqllocaldb; Database=Reczept");
             List<Tag> tagList = dataAccess.GetAllTags();
             var tempArray = message.TargetedText.Split(' ');
             bool success = false;

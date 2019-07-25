@@ -43,9 +43,8 @@ namespace ReczeptBot
             });
             return list;
         }
-	
 
-        public  List<Recipe> GetAllRecipesWithTag(Tag tag)
+        public List<Recipe> GetAllRecipesWithTag(Tag tag)
         {
             var list = new List<Recipe>();
 
@@ -72,7 +71,7 @@ namespace ReczeptBot
             return list;
         }
 
-        public  void GetUserIdFromName(User user)
+        public void GetUserIdFromName(User user)
         {
             Connect(@"SELECT MemberId
                         FROM SlackUser
@@ -88,7 +87,7 @@ namespace ReczeptBot
             });
         }
 
-        public  void GetTagId(Tag tag)
+        public void GetTagId(Tag tag)
         {
             Connect(@"SELECT Id
                         FROM Tag
@@ -101,12 +100,11 @@ namespace ReczeptBot
                 if (reader.Read())
                 {
                     tag.Id = reader.GetSqlInt32(0).Value;
-
                 };
             });
         }
 
-        public  List<Tag> GetTagsForRecipe(Recipe recipe)
+        public List<Tag> GetTagsForRecipe(Recipe recipe)
         {
             var list = new List<Tag>();
 
@@ -117,7 +115,27 @@ namespace ReczeptBot
             {
                 command.Parameters.Add(new SqlParameter("Id", recipe.Id));
 
+                SqlDataReader reader = command.ExecuteReader();
 
+                while (reader.Read())
+                {
+                    var tag = new Tag
+                    {
+                        Id = reader.GetSqlInt32(0).Value,
+                        Name = reader.GetSqlString(1).Value,
+                    };
+                    list.Add(tag);
+                }
+            });
+            return list;
+        }
+
+        public List<Tag> GetAllTags()
+        {
+            var list = new List<Tag>();
+
+            Connect(@"SELECT t.id, t.Name FROM Tag t", (command) =>
+            {
                 SqlDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
