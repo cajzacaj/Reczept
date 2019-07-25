@@ -16,7 +16,7 @@ namespace Noobot.Console
 
         static void Main(string[] args)
         {
-            System.Console.WriteLine("Starting Noobot...");
+            System.Console.WriteLine("Starting ReczeptBot...");
             AppDomain.CurrentDomain.ProcessExit += ProcessExitHandler; // closing the window doesn't hit this in Windows
             System.Console.CancelKeyPress += ConsoleOnCancelKeyPress;
 

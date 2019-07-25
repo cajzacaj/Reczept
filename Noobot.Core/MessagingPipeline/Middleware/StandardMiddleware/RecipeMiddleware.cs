@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Noobot.Core.MessagingPipeline.Middleware.ValidHandles;
+﻿using Noobot.Core.MessagingPipeline.Middleware.ValidHandles;
 using Noobot.Core.MessagingPipeline.Request;
 using Noobot.Core.MessagingPipeline.Response;
 using ReczeptBot;
+using System.Collections.Generic;
 
 namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
 {
@@ -15,10 +14,12 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
             {
                 new HandlerMapping
                 {
-                    ValidHandles = ExactMatchHandle.For("recipe"),
-                    Description = "Will eventually fetch a recipe!",
+                    ValidHandles = new IValidHandle[]
+                    {
+                        new StartsWithHandle("recept")
+                    },
+                    Description = "Hämtar ett slumpat recept, eller ett recept med den tag du anger (recept <tag>).",
                     EvaluatorFunc = RecipeHandler
-                    
                 }
             };
         }
@@ -27,15 +28,38 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
         {
             App app = new App();
             Recipe recipe = new Recipe();
-            recipe = app.GetRandomRecipe();
-            User user = new User();
-            user.MemberId = message.UserId;
-            user.Name = message.Username;
             DataAccess dataAccess = new DataAccess();
-            yield return message.ReplyToChannel(recipe.Name);
-            yield return message.ReplyToChannel("Vill du laga receptet? Använd då kommandot 'ingredients'");
-            yield return message.ReplyToChannel("Om inte, skriv 'recipe' igen för att få ett nytt.");
-            dataAccess.AddUserLikesRecipe(recipe,user);
+            List<Tag> tagList = dataAccess.GetAllTags();
+            var tempArray = message.TargetedText.Split(' ');
+            bool success = false;
+            if (tempArray.Length > 1)
+            {
+                foreach (Tag tag in tagList)
+                {
+                    if (tag.Name.ToLower() == tempArray[1])
+                    {
+                        var recipes = dataAccess.GetAllRecipesWithTag(tag);
+                        recipe = app.GetRandomRecipeFromList(recipes);
+                        yield return message.ReplyToChannel(recipe.Name);
+                        yield return message.ReplyToChannel("Vill du laga receptet? Använd då kommandot 'ingredients'");
+                        yield return message.ReplyToChannel("Om inte, skriv 'recipe' igen för att få ett nytt.");
+                        success = true;
+                        break;
+                    }
+                }
+                if (!success)
+                    yield return message.ReplyToChannel("Felaktig tag!");
+            }
+            else
+            {
+                recipe = app.GetRandomRecipe();
+                User user = new User();
+                user.MemberId = message.UserId;
+                user.Name = message.Username;
+                yield return message.ReplyToChannel(recipe.Name);
+                yield return message.ReplyToChannel("Vill du laga receptet? Använd då kommandot 'ingredients'");
+                yield return message.ReplyToChannel("Om inte, skriv 'recipe' igen för att få ett nytt.");
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ namespace ReczeptBot
     {
         private const string conString = "Server=(localdb)\\mssqllocaldb; Database=Reczept";
 
-        internal List<Recipe> GetAllRecipes()
+        public  List<Recipe> GetAllRecipes()
         {
             var sql = @"SELECT [Id], [Name]
                         FROM Recipe";
@@ -38,7 +38,7 @@ namespace ReczeptBot
         }
 	
 
-        internal List<Recipe> GetAllRecipesWithTag(Tag tag)
+        public  List<Recipe> GetAllRecipesWithTag(Tag tag)
         {
             var sql = @"SELECT Recipe.Id, Recipe.Name
                         FROM Recipe
@@ -71,7 +71,7 @@ namespace ReczeptBot
             }
         }
 
-        internal void GetUserIdFromName(User user)
+        public  void GetUserIdFromName(User user)
         {
             var sql = @"SELECT MemberId
                         FROM SlackUser 
@@ -92,7 +92,7 @@ namespace ReczeptBot
             }
         }
 
-        internal void GetTagId(Tag tag)
+        public  void GetTagId(Tag tag)
         {
             var sql = @"SELECT Id
                         FROM Tag 
@@ -113,7 +113,7 @@ namespace ReczeptBot
             }
         }
 
-        internal List<Tag> GetTagsForRecipe(Recipe recipe)
+        public  List<Tag> GetTagsForRecipe(Recipe recipe)
         {
             var sql = @"SELECT t.id, t.Name FROM Tag t
                         JOIN TagsOnRecipe tor ON t.Id=tor.TagId
@@ -125,6 +125,32 @@ namespace ReczeptBot
             {
                 connection.Open();
                 command.Parameters.Add(new SqlParameter("Id", recipe.Id));
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                var list = new List<Tag>();
+
+                while (reader.Read())
+                {
+                    var tag = new Tag
+                    {
+                        Id = reader.GetSqlInt32(0).Value,
+                        Name = reader.GetSqlString(1).Value,
+                    };
+                    list.Add(tag);
+                }
+
+                return list;
+            }
+        }
+        public  List<Tag> GetAllTags()
+        {
+            var sql = @"SELECT t.id, t.Name FROM Tag t";
+
+            using (SqlConnection connection = new SqlConnection(conString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
+            {
+                connection.Open();
 
                 SqlDataReader reader = command.ExecuteReader();
 
@@ -162,7 +188,7 @@ namespace ReczeptBot
             }
             
         }
-        internal bool UserLikesRecipe(Recipe recipe, User currentUser)
+        public  bool UserLikesRecipe(Recipe recipe, User currentUser)
         {
             var sql = @"SELECT RecipeId
                         FROM UserLikesRecipe
