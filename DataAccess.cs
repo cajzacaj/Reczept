@@ -270,7 +270,7 @@ namespace ReczeptBot
         {
             var list = new List<Ingredient>();
 
-            Connect(@"SELECT i.id, i.Namn, rci.Quantity, u.Unit FROM Ingredient
+            Connect(@"SELECT i.id, i.Namn, rci.Quantity, u.Unit FROM Ingredient i
                         JOIN RecipeContainsIngredient rci ON i.id=rci.IngredientId
                         JOIN Recipe r ON rci.RecipeId = r.Id
                         JOIN Unit u ON rci.MeasurementUnit=u.Id

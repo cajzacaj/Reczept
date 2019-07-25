@@ -381,27 +381,27 @@ namespace ReczeptBot
         {
             Header(recipe.Name);
 
-            //List<Ingredient> ingredients = _dataAccess.GetIngredientsInRecipe(recipe);
+            List<Ingredient> ingredients = _dataAccess.GetIngredientsInRecipe(recipe);
             //Temporärlösning för att kunna prova lite bara
             recipe.Description = "Här ska det stå hur du ska göra";
-            List<Ingredient> ingredients = new List<Ingredient>();
+            //List<Ingredient> ingredients = new List<Ingredient>();
 
-            var ingredient1 = new Ingredient
-            {
-                Id = 1,
-                Name = "Salt",
-                Quantity = 1,
-                Unit = "tsk"
-            };
-            ingredients.Add(ingredient1);
-            var ingredient2 = new Ingredient
-            {
-                Id = 2,
-                Name = "Kärlek",
-                Quantity = 100,
-                Unit = "st"
-            };
-            ingredients.Add(ingredient2);
+            //var ingredient1 = new Ingredient
+            //{
+            //    Id = 1,
+            //    Name = "Salt",
+            //    Quantity = 1,
+            //    Unit = "tsk"
+            //};
+            //ingredients.Add(ingredient1);
+            //var ingredient2 = new Ingredient
+            //{
+            //    Id = 2,
+            //    Name = "Kärlek",
+            //    Quantity = 100,
+            //    Unit = "st"
+            //};
+            //ingredients.Add(ingredient2);
 
             Console.WriteLine("Ingredienser:");
             foreach (Ingredient ingredient in ingredients)
@@ -423,7 +423,6 @@ namespace ReczeptBot
                 switch (input)
                 {
                     case ConsoleKey.J:
-                        //_dataAccess.AddUserLikesRecipe(recipe, _currentUser);
                         _dataAccess.AddIfLikedOrNot(_currentUser, true);
                         return;
                     case ConsoleKey.N:
