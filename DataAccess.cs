@@ -196,6 +196,38 @@ namespace ReczeptBot
             }
         }
 
+        internal List<Recipe> GetAllRecipesMainCourse()
+        {
+            var sql = @"SELECT Recipe.Id, Recipe.Name
+                        FROM Recipe
+                        JOIN TagsOnRecipe tor ON Recipe.Id = tor.RecipeId
+                        JOIN Tag t ON tor.TagId = t.Id
+                        WHERE t.Id = 11";
+
+            using (SqlConnection connection = new SqlConnection(conString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
+            {
+                connection.Open();
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                var list = new List<Recipe>();
+
+                while (reader.Read())
+                {
+                    var recipe = new Recipe
+                    {
+                        Id = reader.GetSqlInt32(0).Value,
+                        Name = reader.GetSqlString(1).Value,
+                    };
+                    list.Add(recipe);
+                }
+
+                return list;
+
+            }
+        }
+
         internal bool UserLikesRecipe(Recipe recipe, User currentUser)
         {
             var sql = @"SELECT RecipeId
@@ -215,6 +247,41 @@ namespace ReczeptBot
                     return true;
                 else
                     return false;
+            }
+        }
+
+        internal List<Recipe> GetAllRecipesLikedByUserMainCourse(User currentUser)
+        {
+                var sql = @"SELECT Recipe.Id, Recipe.Name
+                            FROM Recipe
+                            JOIN UserLikesRecipe ulr ON Recipe.Id=ulr.RecipeId
+                            JOIN SlackUser su ON ulr.UserId=su.MemberId
+                            JOIN TagsOnRecipe tor ON Recipe.Id = tor.RecipeId
+                            JOIN Tag t ON tor.TagId = t.Id
+                            WHERE su.MemberId =@Id AND t.Id = 11";
+
+            using (SqlConnection connection = new SqlConnection(conString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
+            {
+                connection.Open();
+                command.Parameters.Add(new SqlParameter("Id", currentUser.MemberId));
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                var list = new List<Recipe>();
+
+                while (reader.Read())
+                {
+                    var recipe = new Recipe
+                    {
+                        Id = reader.GetSqlInt32(0).Value,
+                        Name = reader.GetSqlString(1).Value,
+                    };
+                    list.Add(recipe);
+                }
+
+                return list;
+
             }
         }
     }

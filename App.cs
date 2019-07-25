@@ -10,7 +10,7 @@ namespace ReczeptBot
     public class App
     {
         DataAccess _dataAccess = new DataAccess();
-        Random r = new Random();
+       
         Page _currentPage = Page.LoginScreen;
         User _currentUser = new User();
 
@@ -60,7 +60,7 @@ namespace ReczeptBot
             switch (input)
             {
                 case ConsoleKey.A:
-                    recipes = GetAllRecipes();
+                    recipes = GetAllRecipesMainCourse();
                     PrintWeekMenu(recipes);
                     return;
                 case ConsoleKey.B:
@@ -68,7 +68,7 @@ namespace ReczeptBot
                     PrintWeekMenu(recipes);
                     return;
                 case ConsoleKey.C:
-                    recipes = GetAllRecipesLikedByUser();
+                    recipes = GetAllRecipesLikedByUserMainCourse();
                     PrintWeekMenu(recipes);
                     return;
                 case ConsoleKey.D:
@@ -141,6 +141,10 @@ namespace ReczeptBot
         {
             return _dataAccess.GetAllRecipesLikedByUser(_currentUser);
         }
+        private List<Recipe> GetAllRecipesLikedByUserMainCourse()
+        {
+            return _dataAccess.GetAllRecipesLikedByUserMainCourse(_currentUser);
+        }
 
         private List<Recipe> GetAllRecipesWithTag()
         {
@@ -175,6 +179,10 @@ namespace ReczeptBot
         private List<Recipe> GetAllRecipes()
         {
             return _dataAccess.GetAllRecipes();
+        }
+        private List<Recipe> GetAllRecipesMainCourse()
+        {
+            return _dataAccess.GetAllRecipesMainCourse();
         }
 
         private void PageLoginScreen()
@@ -267,7 +275,7 @@ namespace ReczeptBot
 
         private Recipe GetRandomRecipeFromList(List<Recipe> list)
         {
-            int randomIndex = r.Next(list.Count - 1);
+            int randomIndex = Rand.Next(0, list.Count - 1);
 
             return list[randomIndex];
         }
