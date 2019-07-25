@@ -61,6 +61,7 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
                 yield return message.ReplyToChannel(recipe.Name);
                 yield return message.ReplyToChannel("Vill du laga receptet? Använd då kommandot 'ingredienser'");
                 yield return message.ReplyToChannel("Om inte, skriv 'recept' igen för att få ett nytt.");
+                dataAccess.AddToHistory(user,recipe);
             }
         }
     }
