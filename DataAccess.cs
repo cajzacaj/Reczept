@@ -262,9 +262,9 @@ namespace ReczeptBot
             Connect(@"UPDATE UserHistory set UserLikesRecipe = @Liked WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = @UserId)", (command) =>
             {
                 if(likedRecipe)
-                    command.Parameters.Add(new SqlParameter("Liked", 1));
-                else
-                    command.Parameters.Add(new SqlParameter("Liked", 0));
+                    command.Parameters.Add(new SqlParameter("Liked", true));
+                else if (!likedRecipe)
+                    command.Parameters.Add(new SqlParameter("Liked", false));
                 command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
                 command.ExecuteNonQuery();
             });

@@ -328,7 +328,7 @@ namespace ReczeptBot
 
             PrintRecipeTags(recipe);
 
-            //_dataAccess.AddToHistory(_currentUser, recipe);
+            _dataAccess.AddToHistory(_currentUser, recipe);
 
             Console.Write("\nVill du laga det här receptet? (j/n): ");
 
@@ -423,11 +423,11 @@ namespace ReczeptBot
                 switch (input)
                 {
                     case ConsoleKey.J:
-                        _dataAccess.AddUserLikesRecipe(recipe, _currentUser);
-                        //_dataAccess.AddIfLikedOrNot(_currentUser, true);
+                        //_dataAccess.AddUserLikesRecipe(recipe, _currentUser);
+                        _dataAccess.AddIfLikedOrNot(_currentUser, true);
                         return;
                     case ConsoleKey.N:
-                        //_dataAccess.AddIfLikedOrNot(_currentUser, false);
+                        _dataAccess.AddIfLikedOrNot(_currentUser, false);
                         return;
                 }
 
