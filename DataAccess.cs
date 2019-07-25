@@ -6,21 +6,30 @@ namespace ReczeptBot
 {
     internal class DataAccess
     {
-        private const string conString = "Server=(localdb)\\mssqllocaldb; Database=Reczept";
+        private string conString;
 
-        internal List<Recipe> GetAllRecipes()
+        public DataAccess(string conString)
         {
-            var sql = @"SELECT [Id], [Name]
-                        FROM Recipe";
+            this.conString = conString;
+        }
 
+        public void Connect(string sql, Action<SqlCommand> action)
+        {
             using (SqlConnection connection = new SqlConnection(conString))
             using (SqlCommand command = new SqlCommand(sql, connection))
             {
                 connection.Open();
+                action(command);
+            }
+        }
 
+        internal List<Recipe> GetAllRecipes()
+        {
+            var list = new List<Recipe>();
+
+            Connect("SELECT [Id], [Name] FROM Recipe", (command) =>
+            {
                 SqlDataReader reader = command.ExecuteReader();
-
-                var list = new List<Recipe>();
 
                 while (reader.Read())
                 {
@@ -31,31 +40,24 @@ namespace ReczeptBot
                     };
                     list.Add(recipe);
                 }
-
-                return list;
-
-            }
+            });
+            return list;
         }
-	
 
         internal List<Recipe> GetAllRecipesWithTag(Tag tag)
         {
-            var sql = @"SELECT Recipe.Id, Recipe.Name
-                        FROM Recipe
-                        JOIN TagsOnRecipe tor ON Recipe.Id=tor.RecipeId
-                        JOIN Tag ON tor.TagId=Tag.Id
-                        WHERE Tag.Id=@Id";
+            var list = new List<Recipe>();
 
-            using (SqlConnection connection = new SqlConnection(conString))
-            using (SqlCommand command = new SqlCommand(sql, connection))
+            Connect(@"SELECT Recipe.Id, Recipe.Name
+                      FROM Recipe
+                      JOIN TagsOnRecipe tor ON Recipe.Id = tor.RecipeId
+                      JOIN Tag ON tor.TagId = Tag.Id
+                      WHERE Tag.Id = @Id", (command) =>
             {
-                connection.Open();
                 command.Parameters.Add(new SqlParameter("Id", tag.Id));
 
                 SqlDataReader reader = command.ExecuteReader();
 
-                var list = new List<Recipe>();
-
                 while (reader.Read())
                 {
                     var recipe = new Recipe
@@ -65,43 +67,32 @@ namespace ReczeptBot
                     };
                     list.Add(recipe);
                 }
-
-                return list;
-
-            }
+            });
+            return list;
         }
 
         internal void GetUserIdFromName(User user)
         {
-            var sql = @"SELECT MemberId
-                        FROM SlackUser 
-                        WHERE Name=@Name";
-
-            using (SqlConnection connection = new SqlConnection(conString))
-            using (SqlCommand command = new SqlCommand(sql, connection))
+            Connect(@"SELECT MemberId
+                        FROM SlackUser
+                        WHERE Name=@Name", (command) =>
             {
-                connection.Open();
                 command.Parameters.Add(new SqlParameter("Name", user.Name));
-
                 SqlDataReader reader = command.ExecuteReader();
 
                 if (reader.Read())
                 {
                     user.MemberId = reader.GetSqlString(0).Value;
-                }
-            }
+                };
+            });
         }
 
         internal void GetTagId(Tag tag)
         {
-            var sql = @"SELECT Id
-                        FROM Tag 
-                        WHERE Name=@Name";
-
-            using (SqlConnection connection = new SqlConnection(conString))
-            using (SqlCommand command = new SqlCommand(sql, connection))
+            Connect(@"SELECT Id
+                        FROM Tag
+                        WHERE Name=@Name", (command) =>
             {
-                connection.Open();
                 command.Parameters.Add(new SqlParameter("Name", tag.Name));
 
                 SqlDataReader reader = command.ExecuteReader();
@@ -109,26 +100,24 @@ namespace ReczeptBot
                 if (reader.Read())
                 {
                     tag.Id = reader.GetSqlInt32(0).Value;
-                }
-            }
+
+                };
+            });
         }
 
         internal List<Tag> GetTagsForRecipe(Recipe recipe)
         {
-            var sql = @"SELECT t.id, t.Name FROM Tag t
+            var list = new List<Tag>();
+
+            Connect(@"SELECT t.id, t.Name FROM Tag t
                         JOIN TagsOnRecipe tor ON t.Id=tor.TagId
                         JOIN Recipe r ON tor.RecipeId = r.Id
-                        WHERE r.Id=@Id";
-
-            using (SqlConnection connection = new SqlConnection(conString))
-            using (SqlCommand command = new SqlCommand(sql, connection))
+                        WHERE r.Id=@Id", (command) =>
             {
-                connection.Open();
                 command.Parameters.Add(new SqlParameter("Id", recipe.Id));
 
-                SqlDataReader reader = command.ExecuteReader();
 
-                var list = new List<Tag>();
+                SqlDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
                 {
@@ -139,12 +128,11 @@ namespace ReczeptBot
                     };
                     list.Add(tag);
                 }
-
-                return list;
-            }
+            });
+            return list;
         }
 
-        internal void AddUserLikesRecipe(Recipe recipe, User currentUser)
+        internal void AddUserLikesRecipe(Recipe recipe, User currentUser) //Behöver göras om helt framöver
         {
             if (!UserLikesRecipe(recipe, currentUser))
             {
@@ -160,10 +148,9 @@ namespace ReczeptBot
                     command.ExecuteNonQuery();
                 }
             }
-            
         }
 
-        internal List<Recipe> GetAllRecipesLikedByUser(User currentUser)
+        internal List<Recipe> GetAllRecipesLikedByUser(User currentUser) //Behöver göras om helt framöver
         {
             var sql = @"SELECT Recipe.Id, Recipe.Name
                         FROM Recipe
@@ -192,26 +179,20 @@ namespace ReczeptBot
                 }
 
                 return list;
-
             }
         }
 
         internal List<Recipe> GetAllRecipesMainCourse()
         {
-            var sql = @"SELECT Recipe.Id, Recipe.Name
+            var list = new List<Recipe>();
+
+            Connect(@"SELECT Recipe.Id, Recipe.Name
                         FROM Recipe
                         JOIN TagsOnRecipe tor ON Recipe.Id = tor.RecipeId
                         JOIN Tag t ON tor.TagId = t.Id
-                        WHERE t.Id = 11";
-
-            using (SqlConnection connection = new SqlConnection(conString))
-            using (SqlCommand command = new SqlCommand(sql, connection))
+                        WHERE t.Id = 11", (command) =>
             {
-                connection.Open();
-
                 SqlDataReader reader = command.ExecuteReader();
-
-                var list = new List<Recipe>();
 
                 while (reader.Read())
                 {
@@ -222,13 +203,11 @@ namespace ReczeptBot
                     };
                     list.Add(recipe);
                 }
-
-                return list;
-
-            }
+            });
+            return list;
         }
 
-        internal bool UserLikesRecipe(Recipe recipe, User currentUser)
+        internal bool UserLikesRecipe(Recipe recipe, User currentUser) //Behöver göras om helt framöver
         {
             var sql = @"SELECT RecipeId
                         FROM UserLikesRecipe
@@ -250,9 +229,9 @@ namespace ReczeptBot
             }
         }
 
-        internal List<Recipe> GetAllRecipesLikedByUserMainCourse(User currentUser)
+        internal List<Recipe> GetAllRecipesLikedByUserMainCourse(User currentUser) //Behöver göras om helt framöver
         {
-                var sql = @"SELECT Recipe.Id, Recipe.Name
+            var sql = @"SELECT Recipe.Id, Recipe.Name
                             FROM Recipe
                             JOIN UserLikesRecipe ulr ON Recipe.Id=ulr.RecipeId
                             JOIN SlackUser su ON ulr.UserId=su.MemberId
@@ -281,7 +260,6 @@ namespace ReczeptBot
                 }
 
                 return list;
-
             }
         }
     }

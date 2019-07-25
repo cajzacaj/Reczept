@@ -9,8 +9,7 @@ namespace ReczeptBot
 {
     public class App
     {
-        DataAccess _dataAccess = new DataAccess();
-       
+        DataAccess _dataAccess = new DataAccess("Server=(localdb)\\mssqllocaldb; Database=Reczept");
         Page _currentPage = Page.LoginScreen;
         User _currentUser = new User();
 
