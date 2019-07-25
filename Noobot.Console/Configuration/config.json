@@ -1,7 +1,7 @@
 ﻿{
   "logFile": "log.txt",
   "adminPin": 0,
-  "slack:apiToken": "xoxb-644590657904-703770255812-aTnQhtfI0Zb7HxWGi2r8d5DE",
+  "slack:apiToken": "xoxb-644590657904-703770255812-5Kd4rrJYHGH8tVlS2E9BHyCm",
   "flickr:apiKey": "",
   "flickr:apiSecret": ""
 }

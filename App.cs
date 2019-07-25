@@ -328,7 +328,9 @@ namespace ReczeptBot
 
             PrintRecipeTags(recipe);
 
-            Console.Write("Gillade du detta recept? (j/n): ");
+            //_dataAccess.AddToHistory(_currentUser, recipe);
+
+            Console.Write("\nVill du laga det här receptet? (j/n): ");
 
             while(true)
             {
@@ -337,9 +339,10 @@ namespace ReczeptBot
                 switch(input)
                 {
                     case ConsoleKey.J:
-                        _dataAccess.AddUserLikesRecipe(recipe, _currentUser);
+                        PrintRecipeFull(recipe);
                         return;
                     case ConsoleKey.N:
+                        _currentPage = Page.GetRecipe;
                         return;
                 }
 
@@ -373,6 +376,62 @@ namespace ReczeptBot
             Console.WriteLine();
 
             Console.ResetColor();
+        }
+        public void PrintRecipeFull(Recipe recipe)
+        {
+            Header(recipe.Name);
+
+            //List<Ingredient> ingredients = _dataAccess.GetIngredientsInRecipe(recipe);
+            //Temporärlösning för att kunna prova lite bara
+            recipe.Description = "Här ska det stå hur du ska göra";
+            List<Ingredient> ingredients = new List<Ingredient>();
+
+            var ingredient1 = new Ingredient
+            {
+                Id = 1,
+                Name = "Salt",
+                Quantity = 1,
+                Unit = "tsk"
+            };
+            ingredients.Add(ingredient1);
+            var ingredient2 = new Ingredient
+            {
+                Id = 2,
+                Name = "Kärlek",
+                Quantity = 100,
+                Unit = "st"
+            };
+            ingredients.Add(ingredient2);
+
+            Console.WriteLine("Ingredienser:");
+            foreach (Ingredient ingredient in ingredients)
+            {
+                Console.WriteLine($"{ingredient.Quantity, -4} {ingredient.Unit, -7} {ingredient.Name}");
+            }
+            Console.WriteLine("\nGör så här:");
+            Console.WriteLine(recipe.Description);
+            Console.WriteLine();
+            PrintRecipeTags(recipe);
+
+
+            Console.Write("\nGillade du detta recept? (j/n): ");
+
+            while (true)
+            {
+                ConsoleKey input = Console.ReadKey().Key;
+
+                switch (input)
+                {
+                    case ConsoleKey.J:
+                        _dataAccess.AddUserLikesRecipe(recipe, _currentUser);
+                        //_dataAccess.AddIfLikedOrNot(_currentUser, true);
+                        return;
+                    case ConsoleKey.N:
+                        //_dataAccess.AddIfLikedOrNot(_currentUser, false);
+                        return;
+                }
+
+            }
         }
     }
 }
