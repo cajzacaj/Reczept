@@ -238,7 +238,7 @@ namespace ReczeptBot
                     {
                         Id = reader.GetSqlInt32(0).Value,
                         Name = reader.GetSqlString(1).Value,
-                        Description =reader.GetSqlString(2).Value
+                        Description = reader.GetSqlString(2).Value
                     };
                     list.Add(recipe);
                 }
@@ -339,7 +339,8 @@ namespace ReczeptBot
                     command.Parameters.Add(new SqlParameter("Name", user.Name));
                     command.ExecuteNonQuery();
                 });
-            }    }
+            }
+        }
 
         internal void GetIngredientId(Ingredient ingredient)
         {
@@ -354,7 +355,7 @@ namespace ReczeptBot
                 if (reader.Read())
                 {
                     ingredient.Id = reader.GetSqlInt32(0).Value;
-                };
+                }
             });
         }
 
@@ -385,4 +386,5 @@ namespace ReczeptBot
             });
             return list;
         }
+    }
 }
