@@ -27,7 +27,7 @@ namespace ReczeptBot
         {
             var list = new List<Recipe>();
 
-            Connect("SELECT [Id], [Name] FROM Recipe", (command) =>
+            Connect("SELECT [Id], [Name], [Description] FROM Recipe", (command) =>
             {
                 SqlDataReader reader = command.ExecuteReader();
 
@@ -37,6 +37,7 @@ namespace ReczeptBot
                     {
                         Id = reader.GetSqlInt32(0).Value,
                         Name = reader.GetSqlString(1).Value,
+                        Description = reader.GetSqlString(2).Value
                     };
                     list.Add(recipe);
                 }
@@ -48,7 +49,7 @@ namespace ReczeptBot
         {
             var list = new List<Recipe>();
 
-            Connect(@"SELECT Recipe.Id, Recipe.Name
+            Connect(@"SELECT Recipe.Id, Recipe.Name, Recipe.Description
                       FROM Recipe
                       JOIN TagsOnRecipe tor ON Recipe.Id = tor.RecipeId
                       JOIN Tag ON tor.TagId = Tag.Id
@@ -64,6 +65,7 @@ namespace ReczeptBot
                     {
                         Id = reader.GetSqlInt32(0).Value,
                         Name = reader.GetSqlString(1).Value,
+                        Description = reader.GetSqlString(2).Value
                     };
                     list.Add(recipe);
                 }
@@ -153,7 +155,7 @@ namespace ReczeptBot
 
         internal List<Recipe> GetAllRecipesLikedByUser(User currentUser) //Behöver göras om helt framöver
         {
-            var sql = @"SELECT Recipe.Id, Recipe.Name
+            var sql = @"SELECT Recipe.Id, Recipe.Name, Recipe.Description
                         FROM Recipe
                         JOIN UserLikesRecipe ulr ON Recipe.Id=ulr.RecipeId
                         JOIN SlackUser su ON ulr.UserId=su.MemberId
@@ -175,6 +177,7 @@ namespace ReczeptBot
                     {
                         Id = reader.GetSqlInt32(0).Value,
                         Name = reader.GetSqlString(1).Value,
+                        Description = reader.GetSqlString(2).Value
                     };
                     list.Add(recipe);
                 }
@@ -187,7 +190,7 @@ namespace ReczeptBot
         {
             var list = new List<Recipe>();
 
-            Connect(@"SELECT Recipe.Id, Recipe.Name
+            Connect(@"SELECT Recipe.Id, Recipe.Name, Recipe.Description
                         FROM Recipe
                         JOIN TagsOnRecipe tor ON Recipe.Id = tor.RecipeId
                         JOIN Tag t ON tor.TagId = t.Id
@@ -201,6 +204,7 @@ namespace ReczeptBot
                     {
                         Id = reader.GetSqlInt32(0).Value,
                         Name = reader.GetSqlString(1).Value,
+                        Description = reader.GetSqlString(2).Value
                     };
                     list.Add(recipe);
                 }
@@ -210,7 +214,7 @@ namespace ReczeptBot
 
         internal List<Recipe> GetAllRecipesLikedByUserMainCourse(User currentUser) //Behöver göras om helt framöver
         {
-            var sql = @"SELECT Recipe.Id, Recipe.Name
+            var sql = @"SELECT Recipe.Id, Recipe.Name, Recipe.Description
                             FROM Recipe
                             JOIN UserLikesRecipe ulr ON Recipe.Id=ulr.RecipeId
                             JOIN SlackUser su ON ulr.UserId=su.MemberId
@@ -234,6 +238,7 @@ namespace ReczeptBot
                     {
                         Id = reader.GetSqlInt32(0).Value,
                         Name = reader.GetSqlString(1).Value,
+                        Description =reader.GetSqlString(2).Value
                     };
                     list.Add(recipe);
                 }
@@ -313,6 +318,28 @@ namespace ReczeptBot
             });
             return recipe;
         }
+        public void CheckIfExistingUser(User user)
+        {
+            bool success = true;
+            Connect(@"Select MemberId from SlackUser WHERE MemberId = @MemberID", (command) =>
+            {
+                command.Parameters.Add(new SqlParameter("MemberId", user.MemberId));
+                command.ExecuteNonQuery();
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    success = false;
+                }
+            });
+            if (success == true)
+            {
+                Connect(@"Insert into SlackUser(MemberId, Name) values (@MemberId, @Name)", (command) =>
+                {
+                    command.Parameters.Add(new SqlParameter("MemberId", user.MemberId));
+                    command.Parameters.Add(new SqlParameter("Name", user.Name));
+                    command.ExecuteNonQuery();
+                });
+            }    }
 
         internal void GetIngredientId(Ingredient ingredient)
         {
@@ -358,5 +385,4 @@ namespace ReczeptBot
             });
             return list;
         }
-    }
 }

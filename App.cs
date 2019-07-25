@@ -392,7 +392,7 @@ namespace ReczeptBot
 
             List<Ingredient> ingredients = _dataAccess.GetIngredientsInRecipe(recipe);
             //Temporärlösning för att kunna prova lite bara
-            recipe.Description = "Här ska det stå hur du ska göra";
+            //recipe.Description = "Här ska det stå hur du ska göra";
             //List<Ingredient> ingredients = new List<Ingredient>();
 
             //var ingredient1 = new Ingredient
