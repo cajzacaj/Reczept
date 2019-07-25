@@ -1,4 +1,14 @@
-﻿obj
+obj
 bin
 .vs
 config.json
+Noobot.Console/Configuration/config_REMOTE_6384.json
+Noobot.Console/Configuration/config_REMOTE_18560.json
+Noobot.Console/Configuration/config_LOCAL_6384.json
+Noobot.Console/Configuration/config_LOCAL_18560.json
+Noobot.Console/Configuration/config_BASE_6384.json
+Noobot.Console/Configuration/config_BASE_18560.json
+Noobot.Console/Configuration/config_BACKUP_6384.json
+Noobot.Console/Configuration/config_BACKUP_18560.json
+App.cs.orig
+.gitignore.orig

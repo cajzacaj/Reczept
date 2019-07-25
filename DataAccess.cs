@@ -151,23 +151,7 @@ namespace ReczeptBot
             return list;
         }
 
-        internal void AddUserLikesRecipe(Recipe recipe, User currentUser) //Behöver göras om helt framöver
-        {
-            if (!UserLikesRecipe(recipe, currentUser))
-            {
-                var sql = "INSERT INTO UserLikesRecipe(UserId, RecipeId) VALUES(@UserId, @RecipeId)";
-
-                using (SqlConnection connection = new SqlConnection(conString))
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    connection.Open();
-                    command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
-                    command.Parameters.Add(new SqlParameter("RecipeId", recipe.Id));
-
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
+       
 
         internal List<Recipe> GetAllRecipesLikedByUser(User currentUser) //Behöver göras om helt framöver
         {
@@ -226,27 +210,7 @@ namespace ReczeptBot
             return list;
         }
 
-        internal bool UserLikesRecipe(Recipe recipe, User currentUser) //Behöver göras om helt framöver
-        {
-            var sql = @"SELECT RecipeId
-                        FROM UserLikesRecipe
-                        WHERE RecipeId=@RecipeId AND UserId=@UserId";
-
-            using (SqlConnection connection = new SqlConnection(conString))
-            using (SqlCommand command = new SqlCommand(sql, connection))
-            {
-                connection.Open();
-                command.Parameters.Add(new SqlParameter("RecipeId", recipe.Id));
-                command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.Read())
-                    return true;
-                else
-                    return false;
-            }
-        }
+        
 
         internal List<Recipe> GetAllRecipesLikedByUserMainCourse(User currentUser) //Behöver göras om helt framöver
         {
@@ -280,6 +244,30 @@ namespace ReczeptBot
 
                 return list;
             }
+        }
+
+         public void AddToHistory(User currentUser, Recipe recipe)
+        {
+            Connect(@"INSERT INTO UserHistory(UserId, RecipeId, DateCooked) VALUES(@UserId, @RecipeId, @DateTime)", (command) =>
+            {
+                command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
+                command.Parameters.Add(new SqlParameter("RecipeId", recipe.Id));
+                command.Parameters.Add(new SqlParameter("DateTime", DateTime.Now));
+                command.ExecuteNonQuery();
+            });
+        }
+
+        public void AddIfLikedOrNot(User currentUser, bool likedRecipe)
+        {
+            Connect(@"UPDATE UserHistory set UserLikesRecipe = @Liked WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = @UserId)", (command) =>
+            {
+                if(likedRecipe)
+                    command.Parameters.Add(new SqlParameter("Liked", 1));
+                else
+                    command.Parameters.Add(new SqlParameter("Liked", 0));
+                command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
+                command.ExecuteNonQuery();
+            });
         }
     }
 }
