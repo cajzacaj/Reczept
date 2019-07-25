@@ -108,7 +108,8 @@ namespace ReczeptBot
             Console.WriteLine("a) Hämta alla recept");
             Console.WriteLine("b) Hämta alla recept med en angiven tag");
             Console.WriteLine("c) Hämta alla recept som du gillar");
-            Console.WriteLine("d) Gå till huvudmenyn");
+            Console.WriteLine("d) Hämta alla recept som innehåller en särskild ingrediens");
+            Console.WriteLine("e) Gå till huvudmenyn");
             Console.WriteLine();
 
             ConsoleKey input = Console.ReadKey(true).Key;
@@ -130,6 +131,10 @@ namespace ReczeptBot
                     PrintListOfRecipes(recipes);
                     return;
                 case ConsoleKey.D:
+                    recipes = GetAllRecipesWithIngredient();
+                    PrintListOfRecipes(recipes);
+                    return;
+                case ConsoleKey.E:
                     _currentPage = Page.MainMenu;
                     return;
 
@@ -217,7 +222,8 @@ namespace ReczeptBot
             Console.WriteLine("a) Hämta ett slumpat recept");
             Console.WriteLine("b) Hämta ett recept med en tag");
             Console.WriteLine("c) Hämta ett recept som du gillar");
-            Console.WriteLine("d) Gå till huvudmenyn");
+            Console.WriteLine("d) Hämta ett recept som innehåller en särskild ingrediens");
+            Console.WriteLine("e) Gå till huvudmenyn");
             Console.WriteLine();
 
             ConsoleKey input = Console.ReadKey(true).Key;
@@ -239,13 +245,16 @@ namespace ReczeptBot
                     PrintRecipe(recipe);
                     return;
                 case ConsoleKey.D:
+                    recipe = GetRecipeContainingIngredient();
+                    PrintRecipe(recipe);
+                    return;
+                case ConsoleKey.E:
                     _currentPage = Page.MainMenu;
                     return;
 
 
             }
         }
-
         private Recipe GetRandomRecipeFromLikedRecipes()
         {
             List<Recipe> recipes = _dataAccess.GetAllRecipesLikedByUser(_currentUser);
@@ -432,5 +441,42 @@ namespace ReczeptBot
 
             }
         }
+
+        public Recipe GetRecipeContainingIngredient()
+        {
+            Console.Write("Vilken ingrediens vill du använda? ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+
+            Ingredient ingredient = new Ingredient
+            {
+                Name = Console.ReadLine()
+            };
+
+            Console.ResetColor();
+
+            _dataAccess.GetIngredientId(ingredient);
+
+            List<Recipe> recipes = _dataAccess.GetAllRecipesWithIngredient(ingredient);
+
+            return GetRandomRecipeFromList(recipes);
+        }
+        public List<Recipe> GetAllRecipesWithIngredient()
+        {
+            Console.Write("Vilken ingrediens vill du använda? ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+
+            Ingredient ingredient = new Ingredient
+            {
+                Name = Console.ReadLine()
+            };
+
+            Console.ResetColor();
+
+            _dataAccess.GetIngredientId(ingredient);
+
+            return _dataAccess.GetAllRecipesWithIngredient(ingredient);
+        }
+
+
     }
 }

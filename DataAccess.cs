@@ -313,5 +313,50 @@ namespace ReczeptBot
             });
             return recipe;
         }
+
+        internal void GetIngredientId(Ingredient ingredient)
+        {
+            Connect(@"SELECT Id
+                        FROM Ingredient
+                        WHERE Namn=@Name", (command) =>
+            {
+                command.Parameters.Add(new SqlParameter("Name", ingredient.Name));
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    ingredient.Id = reader.GetSqlInt32(0).Value;
+                };
+            });
+        }
+
+        internal List<Recipe> GetAllRecipesWithIngredient(Ingredient ingredient)
+        {
+            var list = new List<Recipe>();
+
+            Connect(@"SELECT r.Id, r.Name, r.Description
+                      FROM Recipe r
+                      JOIN RecipeContainsIngredient rci ON r.Id = rci.RecipeId
+                      JOIN Ingredient i ON rci.IngredientId = i.Id
+                      WHERE i.Id = @Id", (command) =>
+            {
+                command.Parameters.Add(new SqlParameter("Id", ingredient.Id));
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var recipe = new Recipe
+                    {
+                        Id = reader.GetSqlInt32(0).Value,
+                        Name = reader.GetSqlString(1).Value,
+                        Description = reader.GetSqlString(2).Value,
+                    };
+                    list.Add(recipe);
+                }
+            });
+            return list;
+        }
     }
 }
