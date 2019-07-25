@@ -151,22 +151,15 @@ namespace ReczeptBot
             return list;
         }
 
-        internal void AddUserLikesRecipe(Recipe recipe, User currentUser) //Behöver göras om helt framöver
+        public void AddToHistory(User currentUser, Recipe recipe) //Behöver göras om helt framöver
         {
-            if (!UserLikesRecipe(recipe, currentUser))
+            Connect(@"INSERT INTO UserHistory(UserId, RecipeId, DateCooked) VALUES(@UserId, @RecipeId, @DateTime)", (command) =>
             {
-                var sql = "INSERT INTO UserLikesRecipe(UserId, RecipeId) VALUES(@UserId, @RecipeId)";
-
-                using (SqlConnection connection = new SqlConnection(conString))
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    connection.Open();
-                    command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
-                    command.Parameters.Add(new SqlParameter("RecipeId", recipe.Id));
-
-                    command.ExecuteNonQuery();
-                }
-            }
+                command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
+                command.Parameters.Add(new SqlParameter("RecipeId", recipe.Id));
+                command.Parameters.Add(new SqlParameter("DateTime", DateTime.Now));
+                command.ExecuteNonQuery();
+            });
         }
 
         internal List<Recipe> GetAllRecipesLikedByUser(User currentUser) //Behöver göras om helt framöver

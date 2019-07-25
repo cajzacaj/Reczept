@@ -2,7 +2,6 @@
 using Noobot.Core.MessagingPipeline.Request;
 using Noobot.Core.MessagingPipeline.Response;
 using ReczeptBot;
-using System;
 using System.Collections.Generic;
 
 namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
@@ -19,7 +18,7 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
                     {
                         new StartsWithHandle("recept")
                     },
-                    Description = "Hämtar ett slumpat recept, eller ett recept med den tag du anger (recept <tag>).",
+                    Description = "Hämtar ett slumpat recept, eller ett slumpat recept med den tag du anger (recept <tag>).",
                     EvaluatorFunc = RecipeHandler
                 }
             };
@@ -31,6 +30,10 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
             Recipe recipe = new Recipe();
             DataAccess dataAccess = new DataAccess("Server=(localdb)\\mssqllocaldb; Database=Reczept");
             List<Tag> tagList = dataAccess.GetAllTags();
+            User user = new User
+            {
+                MemberId = message.UserId
+            };
             var tempArray = message.TargetedText.Split(' ');
             bool success = false;
             if (tempArray.Length > 1)
@@ -42,9 +45,10 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
                         var recipes = dataAccess.GetAllRecipesWithTag(tag);
                         recipe = app.GetRandomRecipeFromList(recipes);
                         yield return message.ReplyToChannel(recipe.Name);
-                        yield return message.ReplyToChannel("Vill du laga receptet? Använd då kommandot 'ingredients'");
-                        yield return message.ReplyToChannel("Om inte, skriv 'recipe' igen för att få ett nytt.");
+                        yield return message.ReplyToChannel("Vill du laga receptet? Använd då kommandot 'ingredienser'");
+                        yield return message.ReplyToChannel("Om inte, skriv 'recept' igen för att få ett nytt.");
                         success = true;
+                        dataAccess.AddToHistory(user,recipe);
                         break;
                     }
                 }
@@ -54,12 +58,9 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
             else
             {
                 recipe = app.GetRandomRecipe();
-                User user = new User();
-                user.MemberId = message.UserId;
-                user.Name = message.Username;
                 yield return message.ReplyToChannel(recipe.Name);
-                yield return message.ReplyToChannel("Vill du laga receptet? Använd då kommandot 'ingredients'");
-                yield return message.ReplyToChannel("Om inte, skriv 'recipe' igen för att få ett nytt.");
+                yield return message.ReplyToChannel("Vill du laga receptet? Använd då kommandot 'ingredienser'");
+                yield return message.ReplyToChannel("Om inte, skriv 'recept' igen för att få ett nytt.");
             }
         }
     }

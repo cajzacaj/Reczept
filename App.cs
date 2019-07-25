@@ -337,7 +337,7 @@ namespace ReczeptBot
                 switch(input)
                 {
                     case ConsoleKey.J:
-                        _dataAccess.AddUserLikesRecipe(recipe, _currentUser);
+                        //_dataAccess.AddUserLikesRecipe(recipe, _currentUser);
                         return;
                     case ConsoleKey.N:
                         return;
