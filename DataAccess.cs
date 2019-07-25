@@ -318,5 +318,29 @@ namespace ReczeptBot
             });
             return recipe;
         }
+
+        public void CheckIfExistingUser(User user)
+        {
+            bool success = true;
+            Connect(@"Select MemberId from SlackUser WHERE MemberId = @MemberID", (command) =>
+            {
+                command.Parameters.Add(new SqlParameter("MemberId", user.MemberId));
+                command.ExecuteNonQuery();
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    success = false;
+                }
+            });
+            if (success == true)
+            {
+                Connect(@"Insert into SlackUser(MemberId, Name) values (@MemberId, @Name)", (command) =>
+                {
+                    command.Parameters.Add(new SqlParameter("MemberId", user.MemberId));
+                    command.Parameters.Add(new SqlParameter("Name", user.Name));
+                    command.ExecuteNonQuery();
+                });
+            }
+        }
     }
 }
