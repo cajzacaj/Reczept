@@ -1,3 +1,4 @@
-﻿obj
+obj
 bin
 .vs
+Noobot.Console/Configuration/config.json
