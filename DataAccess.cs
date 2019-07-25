@@ -269,5 +269,34 @@ namespace ReczeptBot
                 command.ExecuteNonQuery();
             });
         }
+
+        internal List<Ingredient> GetIngredientsInRecipe(Recipe recipe)
+        {
+            var list = new List<Ingredient>();
+
+            Connect(@"SELECT i.id, i.Namn, rci.Quantity, u.Unit FROM Ingredient
+                        JOIN RecipeContainsIngredient rci ON i.id=rci.IngredientId
+                        JOIN Recipe r ON rci.RecipeId = r.Id
+                        JOIN Unit u ON rci.MeasurementUnit=u.Id
+                        WHERE r.Id=@Id", (command) =>
+            {
+                command.Parameters.Add(new SqlParameter("Id", recipe.Id));
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var ingredient = new Ingredient
+                    {
+                        Id = reader.GetSqlInt32(0).Value,
+                        Name = reader.GetSqlString(1).Value,
+                        Quantity = reader.GetSqlDouble(2).Value,
+                        Unit = reader.GetSqlString(3).Value,
+                    };
+                    list.Add(ingredient);
+                }
+            });
+            return list;
+        }
     }
 }
