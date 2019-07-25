@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Medallion;
 
 namespace ReczeptBot
 {
     public class App
     {
-        DataAccess _dataAccess = new DataAccess();
-        Random r = new Random();
+        DataAccess _dataAccess = new DataAccess("Server=(localdb)\\mssqllocaldb; Database=Reczept");
         Page _currentPage = Page.LoginScreen;
         User _currentUser = new User();
 
@@ -31,12 +31,73 @@ namespace ReczeptBot
                     case Page.GetRecipeList:
                         PageGetRecipeList();
                         break;
+                    case Page.GetWeekMenu:
+                        PageGetWeekMenu();
+                        break;
                     case Page.EndProgram:
                         PageEndProgram();
                         return;
                 }
             }
+        }
 
+        private void PageGetWeekMenu()
+        {
+            Header("Skapa en veckomeny");
+
+            Console.WriteLine("Välj ett alternativ");
+            Console.WriteLine("a) Veckomeny baserad på slumpade recept");
+            Console.WriteLine("b) Veckomeny baserad på en tag");
+            Console.WriteLine("c) Veckomeny baserad på recept som du gillar");
+            Console.WriteLine("d) Gå till huvudmenyn");
+            Console.WriteLine();
+
+            ConsoleKey input = Console.ReadKey(true).Key;
+
+            List<Recipe> recipes;
+
+            switch (input)
+            {
+                case ConsoleKey.A:
+                    recipes = GetAllRecipesMainCourse();
+                    PrintWeekMenu(recipes);
+                    return;
+                case ConsoleKey.B:
+                    recipes = GetAllRecipesWithTag();
+                    PrintWeekMenu(recipes);
+                    return;
+                case ConsoleKey.C:
+                    recipes = GetAllRecipesLikedByUserMainCourse();
+                    PrintWeekMenu(recipes);
+                    return;
+                case ConsoleKey.D:
+                    _currentPage = Page.MainMenu;
+                    return;
+
+            }
+        }
+
+        private void PrintWeekMenu(List<Recipe> recipes)
+        {
+            Header("Veckomeny");
+
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+            recipes.Shuffle();
+
+            List<Recipe> WeekMenu = recipes.Take(7).ToList();
+
+            Console.WriteLine($"Måndag:  {WeekMenu[0].Name}");
+            Console.WriteLine($"Tisdag:  {WeekMenu[1].Name}");
+            Console.WriteLine($"Onsdag:  {WeekMenu[2].Name}");
+            Console.WriteLine($"Torsdag: {WeekMenu[3].Name}");
+            Console.WriteLine($"Fredag:  {WeekMenu[4].Name}");
+            Console.WriteLine($"Lördag:  {WeekMenu[5].Name}");
+            Console.WriteLine($"Söndag:  {WeekMenu[6].Name}");
+
+            Console.ResetColor();
+
+            Console.ReadKey();
         }
 
         public void PageGetRecipeList()
@@ -46,12 +107,13 @@ namespace ReczeptBot
             Console.WriteLine("Välj ett alternativ");
             Console.WriteLine("a) Hämta alla recept");
             Console.WriteLine("b) Hämta alla recept med en angiven tag");
-            Console.WriteLine("c) Gå till huvudmenyn");
+            Console.WriteLine("c) Hämta alla recept som du gillar");
+            Console.WriteLine("d) Gå till huvudmenyn");
             Console.WriteLine();
 
             ConsoleKey input = Console.ReadKey(true).Key;
 
-            List<Recipe> recipes = new List<Recipe>();
+            List<Recipe> recipes;
 
             switch (input)
             {
@@ -64,13 +126,26 @@ namespace ReczeptBot
                     PrintListOfRecipes(recipes);
                     return;
                 case ConsoleKey.C:
+                    recipes = GetAllRecipesLikedByUser();
+                    PrintListOfRecipes(recipes);
+                    return;
+                case ConsoleKey.D:
                     _currentPage = Page.MainMenu;
                     return;
 
             }
         }
 
-        public List<Recipe> GetAllRecipesWithTag()
+        private List<Recipe> GetAllRecipesLikedByUser()
+        {
+            return _dataAccess.GetAllRecipesLikedByUser(_currentUser);
+        }
+        private List<Recipe> GetAllRecipesLikedByUserMainCourse()
+        {
+            return _dataAccess.GetAllRecipesLikedByUserMainCourse(_currentUser);
+        }
+
+       public List<Recipe> GetAllRecipesWithTag()
         {
             Console.Write("Vilken tag vill du använda? ");
 
@@ -104,6 +179,10 @@ namespace ReczeptBot
         {
             return _dataAccess.GetAllRecipes();
         }
+        private List<Recipe> GetAllRecipesMainCourse()
+        {
+            return _dataAccess.GetAllRecipesMainCourse();
+        }
 
         public void PageLoginScreen()
         {
@@ -127,7 +206,7 @@ namespace ReczeptBot
         {
             Header("Avslutar");
             Console.WriteLine("Välkommen åter");
-            Console.ReadKey();
+            Console.ReadKey(true);
         }
 
         public void PageGetRecipe()
@@ -137,12 +216,13 @@ namespace ReczeptBot
             Console.WriteLine("Välj ett alternativ");
             Console.WriteLine("a) Hämta ett slumpat recept");
             Console.WriteLine("b) Hämta ett recept med en tag");
-            Console.WriteLine("c) Gå till huvudmenyn");
+            Console.WriteLine("c) Hämta ett recept som du gillar");
+            Console.WriteLine("d) Gå till huvudmenyn");
             Console.WriteLine();
 
             ConsoleKey input = Console.ReadKey(true).Key;
 
-            Recipe recipe = new Recipe();
+            Recipe recipe;
 
             switch (input)
             {
@@ -155,10 +235,22 @@ namespace ReczeptBot
                     PrintRecipe(recipe);
                     return;
                 case ConsoleKey.C:
+                    recipe = GetRandomRecipeFromLikedRecipes();
+                    PrintRecipe(recipe);
+                    return;
+                case ConsoleKey.D:
                     _currentPage = Page.MainMenu;
                     return;
 
+
             }
+        }
+
+        private Recipe GetRandomRecipeFromLikedRecipes()
+        {
+            List<Recipe> recipes = _dataAccess.GetAllRecipesLikedByUser(_currentUser);
+
+            return GetRandomRecipeFromList(recipes);
         }
 
         public Recipe GetRandomRecipeWithTag()
@@ -182,7 +274,7 @@ namespace ReczeptBot
 
         public Recipe GetRandomRecipeFromList(List<Recipe> list)
         {
-            int randomIndex = r.Next(list.Count - 1);
+            int randomIndex = Rand.Next(0, list.Count - 1);
 
             return list[randomIndex];
         }
@@ -194,7 +286,8 @@ namespace ReczeptBot
             Console.WriteLine("Välj ett alternativ");
             Console.WriteLine("a) Hämta ett recept");
             Console.WriteLine("b) Hämta en lista med recept");
-            Console.WriteLine("c) Avsluta programmet");
+            Console.WriteLine("c) Skapa en veckomeny");
+            Console.WriteLine("d) Avsluta programmet");
             Console.WriteLine();
 
             ConsoleKey choice = Console.ReadKey().Key;
@@ -208,6 +301,9 @@ namespace ReczeptBot
                     _currentPage = Page.GetRecipeList;
                     break;
                 case ConsoleKey.C:
+                    _currentPage = Page.GetWeekMenu;
+                    break;
+                case ConsoleKey.D:
                     _currentPage = Page.EndProgram;
                     break;
             }
