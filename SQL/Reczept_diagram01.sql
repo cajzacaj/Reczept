@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [Reczept]    Script Date: 7/25/2019 2:52:53 PM ******/
+/****** Object:  Database [Reczept]    Script Date: 2019-07-25 15:37:42 ******/
 CREATE DATABASE [Reczept]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -87,7 +87,7 @@ ALTER DATABASE SCOPED CONFIGURATION SET QUERY_OPTIMIZER_HOTFIXES = OFF;
 GO
 USE [Reczept]
 GO
-/****** Object:  Table [dbo].[Ingredient]    Script Date: 7/25/2019 2:52:53 PM ******/
+/****** Object:  Table [dbo].[Ingredient]    Script Date: 2019-07-25 15:37:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -101,7 +101,7 @@ CREATE TABLE [dbo].[Ingredient](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Recipe]    Script Date: 7/25/2019 2:52:53 PM ******/
+/****** Object:  Table [dbo].[Recipe]    Script Date: 2019-07-25 15:37:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -116,7 +116,7 @@ CREATE TABLE [dbo].[Recipe](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[RecipeContainsIngredient]    Script Date: 7/25/2019 2:52:53 PM ******/
+/****** Object:  Table [dbo].[RecipeContainsIngredient]    Script Date: 2019-07-25 15:37:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -133,7 +133,7 @@ CREATE TABLE [dbo].[RecipeContainsIngredient](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[SlackUser]    Script Date: 7/25/2019 2:52:53 PM ******/
+/****** Object:  Table [dbo].[SlackUser]    Script Date: 2019-07-25 15:37:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -147,7 +147,7 @@ CREATE TABLE [dbo].[SlackUser](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Tag]    Script Date: 7/25/2019 2:52:53 PM ******/
+/****** Object:  Table [dbo].[Tag]    Script Date: 2019-07-25 15:37:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -161,7 +161,7 @@ CREATE TABLE [dbo].[Tag](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[TagsOnRecipe]    Script Date: 7/25/2019 2:52:53 PM ******/
+/****** Object:  Table [dbo].[TagsOnRecipe]    Script Date: 2019-07-25 15:37:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -176,7 +176,7 @@ CREATE TABLE [dbo].[TagsOnRecipe](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Unit]    Script Date: 7/25/2019 2:52:53 PM ******/
+/****** Object:  Table [dbo].[Unit]    Script Date: 2019-07-25 15:37:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -190,14 +190,16 @@ CREATE TABLE [dbo].[Unit](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[UserLikesRecipe]    Script Date: 7/25/2019 2:52:53 PM ******/
+/****** Object:  Table [dbo].[UserHistory]    Script Date: 2019-07-25 15:37:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[UserLikesRecipe](
+CREATE TABLE [dbo].[UserHistory](
 	[UserId] [varchar](50) NOT NULL,
 	[RecipeId] [int] NOT NULL,
+	[DateCooked] [datetime] NOT NULL,
+	[UserLikesRecipe] [bit] NULL,
  CONSTRAINT [PK_UserLikesRecipe] PRIMARY KEY CLUSTERED 
 (
 	[UserId] ASC,
@@ -230,15 +232,15 @@ REFERENCES [dbo].[Tag] ([Id])
 GO
 ALTER TABLE [dbo].[TagsOnRecipe] CHECK CONSTRAINT [FK_TagsOnRecipe_Tag]
 GO
-ALTER TABLE [dbo].[UserLikesRecipe]  WITH CHECK ADD  CONSTRAINT [FK_UserLikesRecipe_Recipe] FOREIGN KEY([RecipeId])
+ALTER TABLE [dbo].[UserHistory]  WITH CHECK ADD  CONSTRAINT [FK_UserLikesRecipe_Recipe] FOREIGN KEY([RecipeId])
 REFERENCES [dbo].[Recipe] ([Id])
 GO
-ALTER TABLE [dbo].[UserLikesRecipe] CHECK CONSTRAINT [FK_UserLikesRecipe_Recipe]
+ALTER TABLE [dbo].[UserHistory] CHECK CONSTRAINT [FK_UserLikesRecipe_Recipe]
 GO
-ALTER TABLE [dbo].[UserLikesRecipe]  WITH CHECK ADD  CONSTRAINT [FK_UserLikesRecipe_SlackUser] FOREIGN KEY([UserId])
+ALTER TABLE [dbo].[UserHistory]  WITH CHECK ADD  CONSTRAINT [FK_UserLikesRecipe_SlackUser] FOREIGN KEY([UserId])
 REFERENCES [dbo].[SlackUser] ([MemberId])
 GO
-ALTER TABLE [dbo].[UserLikesRecipe] CHECK CONSTRAINT [FK_UserLikesRecipe_SlackUser]
+ALTER TABLE [dbo].[UserHistory] CHECK CONSTRAINT [FK_UserLikesRecipe_SlackUser]
 GO
 USE [master]
 GO
