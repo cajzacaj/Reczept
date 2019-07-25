@@ -265,8 +265,6 @@ namespace ReczeptBot
                 command.ExecuteNonQuery();
             });
         }
-    }
-}
 
         internal List<Ingredient> GetIngredientsInRecipe(Recipe recipe)
         {
@@ -297,7 +295,7 @@ namespace ReczeptBot
             return list;
         }
 
-   public Recipe GetLastRecipe(User currentUser)
+        public Recipe GetLastRecipe(User currentUser)
         {
             var recipe = new Recipe();
             Connect(@"Select RecipeId from UserHistory WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = @UserId)", (command) =>
@@ -305,13 +303,15 @@ namespace ReczeptBot
                 command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
                 command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
-                
+
                 if (reader.Read())
                 {
                     recipe.Id = reader.GetSqlInt32(0).Value;
                     recipe.Name = reader.GetSqlString(1).Value;
+                    recipe.Description = reader.GetSqlString(2).Value;
                 }
             });
             return recipe;
+        }
     }
 }
