@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
 {
-    internal class LikedRecipeMiddleware : MiddlewareBase
+    internal class PrintRecipeMiddleware : MiddlewareBase
     {
-        public LikedRecipeMiddleware(IMiddleware next) : base(next)
+        public PrintRecipeMiddleware(IMiddleware next) : base(next)
         {
             HandlerMappings = new[]
             {

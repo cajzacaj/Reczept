@@ -151,8 +151,6 @@ namespace ReczeptBot
             return list;
         }
 
-       
-
         internal List<Recipe> GetAllRecipesLikedByUser(User currentUser) //Behöver göras om helt framöver
         {
             var sql = @"SELECT Recipe.Id, Recipe.Name
@@ -210,8 +208,6 @@ namespace ReczeptBot
             return list;
         }
 
-        
-
         internal List<Recipe> GetAllRecipesLikedByUserMainCourse(User currentUser) //Behöver göras om helt framöver
         {
             var sql = @"SELECT Recipe.Id, Recipe.Name
@@ -246,7 +242,7 @@ namespace ReczeptBot
             }
         }
 
-         public void AddToHistory(User currentUser, Recipe recipe)
+        public void AddToHistory(User currentUser, Recipe recipe)
         {
             Connect(@"INSERT INTO UserHistory(UserId, RecipeId, DateCooked) VALUES(@UserId, @RecipeId, @DateTime)", (command) =>
             {
@@ -261,7 +257,7 @@ namespace ReczeptBot
         {
             Connect(@"UPDATE UserHistory set UserLikesRecipe = @Liked WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = @UserId)", (command) =>
             {
-                if(likedRecipe)
+                if (likedRecipe)
                     command.Parameters.Add(new SqlParameter("Liked", true));
                 else if (!likedRecipe)
                     command.Parameters.Add(new SqlParameter("Liked", false));
@@ -269,5 +265,24 @@ namespace ReczeptBot
                 command.ExecuteNonQuery();
             });
         }
+
+        public Recipe GetLastRecipe(User currentUser)
+        {
+            var recipe = new Recipe();
+            Connect(@"Select RecipeId from UserHistory WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = @UserId)", (command) =>
+            {
+                command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
+                command.ExecuteNonQuery();
+                SqlDataReader reader = command.ExecuteReader();
+                
+                if (reader.Read())
+                {
+                    recipe.Id = reader.GetSqlInt32(0).Value;
+                    recipe.Name = reader.GetSqlString(1).Value;
+                }
+            });
+            return recipe;
+        }
     }
+}
 }
