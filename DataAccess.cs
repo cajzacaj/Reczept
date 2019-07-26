@@ -23,7 +23,7 @@ namespace ReczeptBot
             }
         }
 
-        internal List<Recipe> GetAllRecipes()
+        public List<Recipe> GetAllRecipes()
         {
             var list = new List<Recipe>();
 
@@ -291,7 +291,7 @@ namespace ReczeptBot
 
             Connect(@"Select RecipeId, Recipe.Name, Recipe.Description from UserHistory
                     JOIN Recipe on Recipe.Id = RecipeId
-                    WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = 'UJYGD2D1B')", (command) =>
+                    WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = @UserId)", (command) =>
             {
                 command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
                 command.ExecuteNonQuery();
@@ -332,7 +332,7 @@ namespace ReczeptBot
             }
         }
 
-        internal void GetIngredientId(Ingredient ingredient)
+        public void GetIngredientId(Ingredient ingredient)
         {
             Connect(@"SELECT Id
                         FROM Ingredient
@@ -349,7 +349,7 @@ namespace ReczeptBot
             });
         }
 
-        internal List<Recipe> GetAllRecipesWithIngredient(Ingredient ingredient)
+        public List<Recipe> GetAllRecipesWithIngredient(Ingredient ingredient)
         {
             var list = new List<Recipe>();
 
