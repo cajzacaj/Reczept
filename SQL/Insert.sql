@@ -26,6 +26,7 @@ VALUES ('Pasta Carbonara','Koka upp välsaltat vatten under lock i en kastrull. 
 ('Halloumipasta med majs och tomat','Koka ris enligt anvisning på förpackningen.  Skala och hacka lök. Tärna paprika och halloumi.  Stek lök i olja i en stor gryta. Tillsätt halloumi och bryn. Blanda ner paprika, pressad vitlök, tomatpuré, matlagningsgrädde, krossade tomater, linser, ingefära, pressad citron och garam masala. Låt puttra under lock tills linserna är mjuka. Smaka av med salt och peppar.  Servera grytan med ris och toppa med koriander.'),
 ('Tikkamasala med linser','Koka ris enligt anvisning på förpackningen.  Skala och hacka lök. Tärna paprika och halloumi.  Stek lök i olja i en stor gryta. Tillsätt halloumi och bryn. Blanda ner paprika, pressad vitlök, tomatpuré, matlagningsgrädde, krossade tomater, linser, ingefära, pressad citron och garam masala. Låt puttra under lock tills linserna är mjuka. Smaka av med salt och peppar.  Servera grytan med ris och toppa med koriander.')
 
+
 -- Taggar
 
 INSERT INTO Tag (Name) 
