@@ -37,7 +37,7 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
             builder.Append($"{recipe.Name}\n\n");
             foreach (Ingredient ingredient in recipe.Ingredients)
             {
-                builder.Append($"{ingredient.Name.PadRight(20)}{ingredient.Quantity} {ingredient.Unit}\n");
+                builder.Append($"{ingredient.Quantity.ToString().PadRight(10)} {ingredient.Unit}\t{ingredient.Name}\n");
             }
             builder.Append($"\n{recipe.Description}");
             yield return message.ReplyToChannel($"```{builder.ToString()}```");
