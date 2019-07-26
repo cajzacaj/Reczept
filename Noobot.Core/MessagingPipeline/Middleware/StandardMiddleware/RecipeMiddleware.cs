@@ -54,6 +54,12 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
                 }
                 else if (tempArray[1] == "veckomeny")
                 {
+                    string json = File.ReadAllText(@"Weeklymenu.json");
+                    weeklyMenu = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<DayOfWeek, Recipe>>>(json);
+                    if (weeklyMenu.ContainsKey(user.MemberId))
+                    {
+                        weeklyMenu.Remove(user.MemberId);
+                    }
                     recipes = dataAccess.GetAllRecipes();
                     recipes = app.PrintWeekMenuSlack(recipes);
                     int i = 0;
@@ -66,7 +72,7 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
                         i++;
                     }
                     weeklyMenu.Add(user.MemberId, tempDict);
-                    string json = JsonConvert.SerializeObject(weeklyMenu);
+                    json = JsonConvert.SerializeObject(weeklyMenu);
                     File.WriteAllText(@"Weeklymenu.json", json);
                     success = true;
                     weekmenu = true;
