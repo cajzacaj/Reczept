@@ -238,7 +238,8 @@ namespace ReczeptBot
             Console.WriteLine("b) Hämta ett recept med en tag");
             Console.WriteLine("c) Hämta ett recept som du gillar");
             Console.WriteLine("d) Hämta ett recept som innehåller en särskild ingrediens");
-            Console.WriteLine("e) Gå till huvudmenyn");
+            Console.WriteLine("e) Hämta ett recept som du aldrig lagat");
+            Console.WriteLine("f) Gå till huvudmenyn");
             Console.WriteLine();
 
             ConsoleKey input = Console.ReadKey(true).Key;
@@ -264,12 +265,24 @@ namespace ReczeptBot
                     PrintRecipe(recipe);
                     return;
                 case ConsoleKey.E:
+                    recipe = GetUnusedRecipeForUser();
+                    if(recipe.Id == -1)
+                    {
+                        Console.WriteLine("Lyckades inte hämta något recept. Du har lagat alla!");
+                        Console.ReadKey(true);
+                        return;
+                    }
+                    PrintRecipe(recipe);
+                    return;
+                case ConsoleKey.F:
                     _currentPage = Page.MainMenu;
                     return;
 
 
             }
         }
+
+
         private Recipe GetRandomRecipeFromLikedRecipes()
         {
             List<Recipe> recipes = _dataAccess.GetAllRecipesLikedByUser(_currentUser);
@@ -490,6 +503,18 @@ namespace ReczeptBot
             _dataAccess.GetIngredientId(ingredient);
 
             return _dataAccess.GetAllRecipesWithIngredient(ingredient);
+        }
+        public Recipe GetUnusedRecipeForUser()
+        {
+            List<Recipe> recipes = _dataAccess.GetAllUnusedRecipesForUser(_currentUser);
+
+            if (recipes.Count == 0)
+                return new Recipe
+                {
+                    Id = -1,
+                };
+
+            return GetRandomRecipeFromList(recipes);
         }
     }
 }

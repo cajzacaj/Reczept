@@ -376,5 +376,29 @@ namespace ReczeptBot
             });
             return list;
         }
+
+        public List<Recipe> GetAllUnusedRecipesForUser(User currentUser)
+        {
+            var list = new List<Recipe>();
+
+            Connect("select id, name, description from recipe r where r.id not in (select recipeid from userhistory where userid = @userid and userlikesrecipe is not null)", (command) =>
+            {
+                command.Parameters.Add(new SqlParameter("userid", currentUser.MemberId));
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var recipe = new Recipe
+                    {
+                        Id = reader.GetSqlInt32(0).Value,
+                        Name = reader.GetSqlString(1).Value,
+                        Description = reader.GetSqlString(2).Value
+                    };
+                    list.Add(recipe);
+                }
+            });
+            return list;
+        }
     }
 }
