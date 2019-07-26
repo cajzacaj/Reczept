@@ -83,17 +83,32 @@ namespace ReczeptBot
 
             Console.ForegroundColor = ConsoleColor.DarkGreen;
 
+            if (recipes.Count < 7)
+            {
+                var takeOut = new Recipe
+                {
+                    Id = 0,
+                    Name = "Hämtmat",
+                    Description = "Köp mat på din favorit-resturang. Eller bara den som är närmast."
+                };
+
+                for (int i = recipes.Count; i < 7; i++)
+                {
+                    recipes.Add(takeOut);
+                }
+            }
+
             recipes.Shuffle();
 
             List<Recipe> WeekMenu = recipes.Take(7).ToList();
 
-            Console.WriteLine($"Måndag:  {WeekMenu[0].Name}");
-            Console.WriteLine($"Tisdag:  {WeekMenu[1].Name}");
-            Console.WriteLine($"Onsdag:  {WeekMenu[2].Name}");
-            Console.WriteLine($"Torsdag: {WeekMenu[3].Name}");
-            Console.WriteLine($"Fredag:  {WeekMenu[4].Name}");
-            Console.WriteLine($"Lördag:  {WeekMenu[5].Name}");
-            Console.WriteLine($"Söndag:  {WeekMenu[6].Name}");
+            Console.WriteLine($"  Måndag: {WeekMenu[0].Name}");
+            Console.WriteLine($"  Tisdag: {WeekMenu[1].Name}");
+            Console.WriteLine($"  Onsdag: {WeekMenu[2].Name}");
+            Console.WriteLine($" Torsdag: {WeekMenu[3].Name}");
+            Console.WriteLine($"  Fredag: {WeekMenu[4].Name}");
+            Console.WriteLine($"  Lördag: {WeekMenu[5].Name}");
+            Console.WriteLine($"  Söndag: {WeekMenu[6].Name}");
 
             Console.ResetColor();
 
@@ -390,7 +405,7 @@ namespace ReczeptBot
         {
             Header(recipe.Name);
 
-            List<Ingredient> ingredients = _dataAccess.GetIngredientsInRecipe(recipe);
+            recipe.Ingredients = _dataAccess.GetIngredientsInRecipe(recipe);
             //Temporärlösning för att kunna prova lite bara
             //recipe.Description = "Här ska det stå hur du ska göra";
             //List<Ingredient> ingredients = new List<Ingredient>();
@@ -413,7 +428,7 @@ namespace ReczeptBot
             //ingredients.Add(ingredient2);
 
             Console.WriteLine("Ingredienser:");
-            foreach (Ingredient ingredient in ingredients)
+            foreach (Ingredient ingredient in recipe.Ingredients)
             {
                 Console.WriteLine($"{ingredient.Quantity, -4} {ingredient.Unit, -7} {ingredient.Name}");
             }
@@ -476,7 +491,5 @@ namespace ReczeptBot
 
             return _dataAccess.GetAllRecipesWithIngredient(ingredient);
         }
-
-
     }
 }
