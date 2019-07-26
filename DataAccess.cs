@@ -369,6 +369,7 @@ namespace ReczeptBot
                 else
                     return false;
             }
+        }
 
         public List<Recipe> GetAllRecipesWithIngredient(Ingredient ingredient)
         {
