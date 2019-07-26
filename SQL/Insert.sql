@@ -25,6 +25,8 @@ VALUES ('Pasta Carbonara','Koka upp välsaltat vatten under lock i en kastrull. 
 ('Falafelwrap','Tillaga falafeln och tortillabröden enligt anvisning på förpackningarna.  Skiva upp rödlök och tomater och häll upp salladen i en skål och servera likt en tacobuffé där alla får ”bygga” sin egen falafel.'),
 ('Halloumipasta med majs och tomat','Koka pastan enligt anvisning på förpackningen.  Skär halloumin i små tärningar och stek i oljan. Häll majsen med spad, pastasåsen och timjan över halloumin och låt sjuda i några minuter.  Servera såsen med pastan.'),
 ('Tikkamasala med linser','Koka ris enligt anvisning på förpackningen.  Skala och hacka lök. Tärna paprika och halloumi.  Stek lök i olja i en stor gryta. Tillsätt halloumi och bryn. Blanda ner paprika, pressad vitlök, tomatpuré, matlagningsgrädde, krossade tomater, linser, ingefära, pressad citron och garam masala. Låt puttra under lock tills linserna är mjuka. Smaka av med salt och peppar.  Servera grytan med ris och toppa med koriander.')
+
+
 -- Taggar
 
 INSERT INTO Tag (Name) 
