@@ -167,14 +167,17 @@ namespace ReczeptBot
 
        public List<Recipe> GetAllRecipesWithTag()
         {
-            Console.Write("Vilken tag vill du använda? ");
-
-            Tag tag = new Tag
+            Tag tag = new Tag();
+            bool success = false;
+            while (success == false)
             {
-                Name = Console.ReadLine()
-            };
+                Console.Write("Vilken tag vill du använda? ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
 
-            _dataAccess.GetTagId(tag);
+                tag.Name = Console.ReadLine();
+                success = _dataAccess.GetTagId(tag);
+                Console.ResetColor();
+            }
 
             return _dataAccess.GetAllRecipesWithTag(tag);
         }
@@ -207,15 +210,15 @@ namespace ReczeptBot
         public void PageLoginScreen()
         {
             Header("Välkommen till Reczept!");
+            User user = new User();
 
-            Console.Write("Vad heter du? ");
-
-            User user = new User
+            bool success = false;
+            while (success == false)
             {
-                Name = Console.ReadLine()
-            };
-
-            _dataAccess.GetUserIdFromName(user);
+                Console.Write("Vad heter du? ");
+                user.Name = Console.ReadLine();
+                success = _dataAccess.GetUserIdFromName(user);
+            }
 
             _currentUser = user;
 
@@ -292,18 +295,17 @@ namespace ReczeptBot
 
         public Recipe GetRandomRecipeWithTag()
         {
-            Console.Write("Vilken tag vill du använda? ");
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-
-            Tag tag = new Tag
+            Tag tag = new Tag();
+            bool success = false;
+            while (success == false)
             {
-                Name = Console.ReadLine()
-            };
+                Console.Write("Vilken tag vill du använda? "); 
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
 
-            Console.ResetColor();
-
-            _dataAccess.GetTagId(tag);
-
+                tag.Name = Console.ReadLine();
+                success = _dataAccess.GetTagId(tag);
+                Console.ResetColor();
+            }
             List<Recipe> recipes = _dataAccess.GetAllRecipesWithTag(tag);
 
             return GetRandomRecipeFromList(recipes);
@@ -367,10 +369,9 @@ namespace ReczeptBot
 
             _dataAccess.AddToHistory(_currentUser, recipe);
 
-            Console.Write("\nVill du laga det här receptet? (j/n): ");
-
             while(true)
             {
+                Console.Write("\nVill du laga det här receptet? (j/n): ");
                 ConsoleKey input = Console.ReadKey().Key;
 
                 switch(input)
@@ -450,11 +451,9 @@ namespace ReczeptBot
             Console.WriteLine();
             PrintRecipeTags(recipe);
 
-
-            Console.Write("\nGillade du detta recept? (j/n): ");
-
             while (true)
             {
+                Console.Write("\nGillade du detta recept? (j/n): ");
                 ConsoleKey input = Console.ReadKey().Key;
 
                 switch (input)
@@ -472,17 +471,17 @@ namespace ReczeptBot
 
         public Recipe GetRecipeContainingIngredient()
         {
-            Console.Write("Vilken ingrediens vill du använda? ");
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-
-            Ingredient ingredient = new Ingredient
+            Ingredient ingredient = new Ingredient();
+            bool success = false;
+            while (success == false)
             {
-                Name = Console.ReadLine()
-            };
+                Console.Write("Vilken ingrediens vill du använda? ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
 
-            Console.ResetColor();
-
-            _dataAccess.GetIngredientId(ingredient);
+                ingredient.Name = Console.ReadLine();
+                success = _dataAccess.GetIngredientId(ingredient);
+                Console.ResetColor();
+            }
 
             List<Recipe> recipes = _dataAccess.GetAllRecipesWithIngredient(ingredient);
 
@@ -490,17 +489,17 @@ namespace ReczeptBot
         }
         public List<Recipe> GetAllRecipesWithIngredient()
         {
-            Console.Write("Vilken ingrediens vill du använda? ");
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-
-            Ingredient ingredient = new Ingredient
+            Ingredient ingredient = new Ingredient();
+            bool success = false;
+            while (success == false)
             {
-                Name = Console.ReadLine()
-            };
+                Console.Write("Vilken ingrediens vill du använda? ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
 
-            Console.ResetColor();
-
-            _dataAccess.GetIngredientId(ingredient);
+                ingredient.Name = Console.ReadLine();
+                success = _dataAccess.GetIngredientId(ingredient);
+                Console.ResetColor();
+            }
 
             return _dataAccess.GetAllRecipesWithIngredient(ingredient);
         }

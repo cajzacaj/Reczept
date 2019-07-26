@@ -23,7 +23,7 @@ namespace ReczeptBot
             }
         }
 
-        internal List<Recipe> GetAllRecipes()
+        public List<Recipe> GetAllRecipes()
         {
             var list = new List<Recipe>();
 
@@ -73,28 +73,40 @@ namespace ReczeptBot
             return list;
         }
 
-        public void GetUserIdFromName(User user)
+        public bool GetUserIdFromName(User user)
         {
-            Connect(@"SELECT MemberId
+            var sql = @"SELECT MemberId
                         FROM SlackUser
-                        WHERE Name=@Name", (command) =>
+                        WHERE Name=@Name";
+
+            using (SqlConnection connection = new SqlConnection(conString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
             {
+                connection.Open();
                 command.Parameters.Add(new SqlParameter("Name", user.Name));
+
                 SqlDataReader reader = command.ExecuteReader();
 
                 if (reader.Read())
                 {
                     user.MemberId = reader.GetSqlString(0).Value;
-                };
-            });
+                    return true;
+                }
+                else
+                    return false;
+            }
         }
 
-        public void GetTagId(Tag tag)
+        public bool GetTagId(Tag tag)
         {
-            Connect(@"SELECT Id
+            var sql = @"SELECT Id
                         FROM Tag
-                        WHERE Name=@Name", (command) =>
+                        WHERE Name=@Name";
+
+            using (SqlConnection connection = new SqlConnection(conString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
             {
+                connection.Open();
                 command.Parameters.Add(new SqlParameter("Name", tag.Name));
 
                 SqlDataReader reader = command.ExecuteReader();
@@ -102,8 +114,11 @@ namespace ReczeptBot
                 if (reader.Read())
                 {
                     tag.Id = reader.GetSqlInt32(0).Value;
-                };
-            });
+                    return true;
+                }
+                else
+                    return false;
+            }
         }
 
         public List<Tag> GetTagsForRecipe(Recipe recipe)
@@ -178,7 +193,7 @@ namespace ReczeptBot
             return list;
         }
 
-        internal List<Recipe> GetAllRecipesMainCourse()
+        public List<Recipe> GetAllRecipesMainCourse()
         {
             var list = new List<Recipe>();
 
@@ -204,7 +219,7 @@ namespace ReczeptBot
             return list;
         }
 
-        internal List<Recipe> GetAllRecipesLikedByUserMainCourse(User currentUser)
+        public List<Recipe> GetAllRecipesLikedByUserMainCourse(User currentUser)
         {
             List<Recipe> list = new List<Recipe>();
             Connect(@"SELECT Recipe.Id, Recipe.Name, Recipe.Description FROM Recipe
@@ -255,7 +270,7 @@ namespace ReczeptBot
             });
         }
 
-        internal List<Ingredient> GetIngredientsInRecipe(Recipe recipe)
+        public List<Ingredient> GetIngredientsInRecipe(Recipe recipe)
         {
             var list = new List<Ingredient>();
 
@@ -332,12 +347,16 @@ namespace ReczeptBot
             }
         }
 
-        internal void GetIngredientId(Ingredient ingredient)
+        public bool GetIngredientId(Ingredient ingredient)
         {
-            Connect(@"SELECT Id
+            var sql = @"SELECT Id
                         FROM Ingredient
-                        WHERE Namn=@Name", (command) =>
+                        WHERE Namn=@Name";
+
+            using (SqlConnection connection = new SqlConnection(conString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
             {
+                connection.Open();
                 command.Parameters.Add(new SqlParameter("Name", ingredient.Name));
 
                 SqlDataReader reader = command.ExecuteReader();
@@ -345,11 +364,28 @@ namespace ReczeptBot
                 if (reader.Read())
                 {
                     ingredient.Id = reader.GetSqlInt32(0).Value;
+                    return true;
                 }
-            });
+                else
+                    return false;
+            }
+
+            //Connect(@"SELECT Id
+            //            FROM Ingredient
+            //            WHERE Namn=@Name", (command) =>
+            //{
+            //    command.Parameters.Add(new SqlParameter("Name", ingredient.Name));
+
+            //    SqlDataReader reader = command.ExecuteReader();
+
+            //    if (reader.Read())
+            //    {
+            //        ingredient.Id = reader.GetSqlInt32(0).Value;
+            //    }
+            //});
         }
 
-        internal List<Recipe> GetAllRecipesWithIngredient(Ingredient ingredient)
+        public List<Recipe> GetAllRecipesWithIngredient(Ingredient ingredient)
         {
             var list = new List<Recipe>();
 
