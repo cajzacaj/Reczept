@@ -153,23 +153,16 @@ namespace ReczeptBot
             return list;
         }
 
-        internal List<Recipe> GetAllRecipesLikedByUser(User currentUser) //Behöver göras om helt framöver
+        public List<Recipe> GetAllRecipesLikedByUser(User currentUser)
         {
-            var sql = @"SELECT Recipe.Id, Recipe.Name, Recipe.Description
-                        FROM Recipe
-                        JOIN UserLikesRecipe ulr ON Recipe.Id=ulr.RecipeId
-                        JOIN SlackUser su ON ulr.UserId=su.MemberId
-                        WHERE su.MemberId=@Id";
-
-            using (SqlConnection connection = new SqlConnection(conString))
-            using (SqlCommand command = new SqlCommand(sql, connection))
+            List<Recipe> list = new List<Recipe>();
+            Connect(@"SELECT Recipe.Id, Recipe.Name, Recipe.Description FROM Recipe
+                        JOIN UserHistory uh ON Recipe.Id=uh.RecipeId
+                        JOIN SlackUser su ON uh.UserId=su.MemberId
+                        WHERE su.MemberId=@Id And uh.UserLikesRecipe = 'true'", (command) =>
             {
-                connection.Open();
                 command.Parameters.Add(new SqlParameter("Id", currentUser.MemberId));
-
                 SqlDataReader reader = command.ExecuteReader();
-
-                var list = new List<Recipe>();
 
                 while (reader.Read())
                 {
@@ -181,9 +174,8 @@ namespace ReczeptBot
                     };
                     list.Add(recipe);
                 }
-
-                return list;
-            }
+            });
+            return list;
         }
 
         internal List<Recipe> GetAllRecipesMainCourse()
@@ -212,25 +204,18 @@ namespace ReczeptBot
             return list;
         }
 
-        internal List<Recipe> GetAllRecipesLikedByUserMainCourse(User currentUser) //Behöver göras om helt framöver
+        internal List<Recipe> GetAllRecipesLikedByUserMainCourse(User currentUser)
         {
-            var sql = @"SELECT Recipe.Id, Recipe.Name, Recipe.Description
-                            FROM Recipe
-                            JOIN UserLikesRecipe ulr ON Recipe.Id=ulr.RecipeId
-                            JOIN SlackUser su ON ulr.UserId=su.MemberId
-                            JOIN TagsOnRecipe tor ON Recipe.Id = tor.RecipeId
-                            JOIN Tag t ON tor.TagId = t.Id
-                            WHERE su.MemberId =@Id AND t.Id = 11";
-
-            using (SqlConnection connection = new SqlConnection(conString))
-            using (SqlCommand command = new SqlCommand(sql, connection))
+            List<Recipe> list = new List<Recipe>();
+            Connect(@"SELECT Recipe.Id, Recipe.Name, Recipe.Description FROM Recipe
+                        JOIN UserHistory uh ON Recipe.Id=uh.RecipeId
+                        JOIN SlackUser su ON uh.UserId=su.MemberId
+                        JOIN TagsOnRecipe tor ON Recipe.Id = tor.RecipeId
+                        JOIN Tag t ON tor.TagId = t.Id
+                        WHERE su.MemberId=@Id And uh.UserLikesRecipe = 'true' AND t.Id = 11", (command) =>
             {
-                connection.Open();
                 command.Parameters.Add(new SqlParameter("Id", currentUser.MemberId));
-
                 SqlDataReader reader = command.ExecuteReader();
-
-                var list = new List<Recipe>();
 
                 while (reader.Read())
                 {
@@ -242,9 +227,8 @@ namespace ReczeptBot
                     };
                     list.Add(recipe);
                 }
-
-                return list;
-            }
+            });
+            return list;
         }
 
         public void AddToHistory(User currentUser, Recipe recipe)
@@ -305,7 +289,7 @@ namespace ReczeptBot
             var recipe = new Recipe();
             var ingredient = new Ingredient();
 
-            Connect(@"Select RecipeId, Recipe.Name, Recipe.Description from UserHistory 
+            Connect(@"Select RecipeId, Recipe.Name, Recipe.Description from UserHistory
                     JOIN Recipe on Recipe.Id = RecipeId
                     WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = 'UJYGD2D1B')", (command) =>
             {
@@ -323,6 +307,7 @@ namespace ReczeptBot
             recipe.Ingredients = GetIngredientsInRecipe(recipe);
             return recipe;
         }
+
         public void CheckIfExistingUser(User user)
         {
             bool success = true;

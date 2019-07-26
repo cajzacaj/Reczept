@@ -107,6 +107,8 @@ namespace Noobot.Core.DependencyResolution
 
             registry.For<IMiddleware>().DecorateAllWith<RecipeMiddleware>();
             registry.For<IMiddleware>().DecorateAllWith<PrintRecipeMiddleware>();
+            registry.For<IMiddleware>().DecorateAllWith<LikedRecipeMiddleware>();
+
             registry.For<IMiddleware>().DecorateAllWith<MultipleCommandsMiddleware>();
 
 

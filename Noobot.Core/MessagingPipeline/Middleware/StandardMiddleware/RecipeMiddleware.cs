@@ -38,30 +38,39 @@ namespace Noobot.Core.MessagingPipeline.Middleware.StandardMiddleware
             bool success = false;
             if (tempArray.Length > 1)
             {
-                foreach (Tag tag in tagList)
+                if (tempArray[1] == "gillar")
                 {
-                    if (tag.Name.ToLower() == tempArray[1])
+                    List<Recipe> recipes = dataAccess.GetAllRecipesLikedByUser(user);
+                    recipe = app.GetRandomRecipeFromList(recipes);
+                    success = true;
+                }
+                else
+                {
+                    foreach (Tag tag in tagList)
                     {
-                        var recipes = dataAccess.GetAllRecipesWithTag(tag);
-                        recipe = app.GetRandomRecipeFromList(recipes);
-                        yield return message.ReplyToChannel(recipe.Name);
-                        yield return message.ReplyToChannel("Vill du laga receptet? Använd då kommandot 'ingredienser'");
-                        yield return message.ReplyToChannel("Om inte, skriv 'recept' igen för att få ett nytt.");
-                        success = true;
-                        dataAccess.AddToHistory(user,recipe);
-                        break;
+                        if (tag.Name.ToLower() == tempArray[1])
+                        {
+                            var recipes = dataAccess.GetAllRecipesWithTag(tag);
+                            recipe = app.GetRandomRecipeFromList(recipes);
+                            success = true;
+                            dataAccess.AddToHistory(user, recipe);
+                            break;
+                        }
                     }
                 }
-                if (!success)
-                    yield return message.ReplyToChannel("Felaktig tag!");
             }
             else
             {
                 recipe = app.GetRandomRecipe();
+                dataAccess.AddToHistory(user, recipe);
+            }
+            if (!success)
+                yield return message.ReplyToChannel("Felaktig tag!");
+            else
+            {
                 yield return message.ReplyToChannel(recipe.Name);
                 yield return message.ReplyToChannel("Vill du laga receptet? Använd då kommandot 'ingredienser'");
                 yield return message.ReplyToChannel("Om inte, skriv 'recept' igen för att få ett nytt.");
-                dataAccess.AddToHistory(user,recipe);
             }
         }
     }
