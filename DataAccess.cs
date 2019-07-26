@@ -306,7 +306,7 @@ namespace ReczeptBot
 
             Connect(@"Select RecipeId, Recipe.Name, Recipe.Description from UserHistory
                     JOIN Recipe on Recipe.Id = RecipeId
-                    WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = 'UJYGD2D1B')", (command) =>
+                    WHERE DateCooked = (select max(DateCooked) FROM UserHistory where UserId = @UserId)", (command) =>
             {
                 command.Parameters.Add(new SqlParameter("UserId", currentUser.MemberId));
                 command.ExecuteNonQuery();
@@ -369,21 +369,6 @@ namespace ReczeptBot
                 else
                     return false;
             }
-
-            //Connect(@"SELECT Id
-            //            FROM Ingredient
-            //            WHERE Namn=@Name", (command) =>
-            //{
-            //    command.Parameters.Add(new SqlParameter("Name", ingredient.Name));
-
-            //    SqlDataReader reader = command.ExecuteReader();
-
-            //    if (reader.Read())
-            //    {
-            //        ingredient.Id = reader.GetSqlInt32(0).Value;
-            //    }
-            //});
-        }
 
         public List<Recipe> GetAllRecipesWithIngredient(Ingredient ingredient)
         {
