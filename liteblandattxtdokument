@@ -1,0 +1,35 @@
+Taggar
+
+Kött
+Fågel
+Fisk
+Vegetariskt
+
+Pasta
+Glutenfritt
+
+Franskt
+SvenskHusman
+Asiatiskt
+
+Förrätt
+Huvudrätt
+Efterrätt
+
+
+
+Varför valde ni att göra detta?
+	Vi ville göra Slack-integration - receptbank kändes också som något som är användbart i verkliga livet.
+
+Vad var utmanade? Vad tog längst tid?
+	För Jens att förstå hur Noobot fungerar pga wikin ligger nere.
+	För Marcus att lägga in alla ingredienser med relationer i databasen
+
+Vad har ni lärt er?
+	Skriv ett console-program för att fylla databas men info från början
+
+Om du skulle fortsätta med appen vad skulle ni göra då?
+	Lägga till att man kan lägga till nya recept, så att man skulle kunna använda sig av databasen på riktigt. Nice-to-Have-listan
+	
+Visa någon detalj från koden (t.ex en metod)
+

@@ -407,8 +407,6 @@ namespace ReczeptBot
 
             _dataAccess.AddToHistory(_currentUser, recipe);
 
-            Console.Write("\nVill du laga det här receptet? (j/n): ");
-
             while (true)
             {
                 Console.Write("\nVill du laga det här receptet? (j/n): ");
@@ -491,8 +489,6 @@ namespace ReczeptBot
             Console.WriteLine(recipe.Description);
             Console.WriteLine();
             PrintRecipeTags(recipe);
-
-            Console.Write("\nGillade du detta recept? (j/n): ");
 
             while (true)
             {
